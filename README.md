@@ -1,1 +1,0 @@
-# rizalsng.github.io
