@@ -45,8 +45,8 @@
   <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" embedded
     renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector id="scene">
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
-    <a-nft type="nft" url="nft/sampoerna" smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5"
-      raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+    <a-nft type="nft" url="nft/sampoerna" emitevents="true" smooth="true" smoothCount="10" smoothTolerance=".01"
+      smoothThreshold="5" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
       <a-entity gltf-model="#flower" animation-mixer="clip:Object_0;loop:pingpong;" scale="0.5 0.5 0.5"
         position="0 1.5 -3" class="clickable" gesture-handler>
       </a-entity>
