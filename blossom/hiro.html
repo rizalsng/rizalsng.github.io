@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="styles.css" />
 
   <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   <script src="gesture-detector.js"></script>
   <script src="gesture-handler.js"></script>
@@ -27,6 +26,7 @@
       align-items: center;
       color: white;
       font-size: 1em;
+      padding: 10%;
     }
 
     .arjs-loader {
@@ -68,7 +68,7 @@
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
     <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;"
       id="markerA">
-      <a-entity id="flower-model" gltf-model="#flower" animation-mixer="clip:Object_0;" position="0 0 0"
+      <a-entity id="flower-model" gltf-model="#flower" animation-mixer="clip:Object_0" position="0 0 0"
         scale="0.05 0.05 0.05" class="clickable" gesture-handler>
       </a-entity>
     </a-marker>
