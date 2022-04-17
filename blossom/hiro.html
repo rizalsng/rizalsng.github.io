@@ -63,8 +63,8 @@
 <body>
   <div id="footer"></div>
 
-  <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" embedded
-    renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector id="scene">
+  <a-scene arjs embedded renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector
+    id="scene">
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
     <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;"
       id="markerA">
