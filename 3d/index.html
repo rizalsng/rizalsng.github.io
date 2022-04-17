@@ -15,7 +15,7 @@
 
 <body>
     <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
-        <a-camera gps-camera="simulateLatitude:-6.257136 ;simulateLongitude:106.851940;" rotation-reader></a-camera>
+        <a-camera gps-camera rotation-reader></a-camera>
         <a-asset-item id="sonic" src="model/scene.gltf"></a-asset-item>
         <a-entity gltf-model="#sonic" animation-mixer="clip:sc_run_loop"
             gps-entity-place="latitude:-6.256951; longitude:106.835538;" scale="0.9 0.9 0.9"></a-entity>
