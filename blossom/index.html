@@ -12,9 +12,36 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   <script src="gesture-detector.js"></script>
   <script src="gesture-handler.js"></script>
+
+  <style>
+    #footer {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 3em;
+    }
+  </style>
+
+  <script>
+    addEventListener('markerFound', function () {
+      document.wuerySelector("#footer").innerHTML = 'marker found';
+    });
+
+    addEventListener('markerLost', function () {
+      document.wuerySelector("#footer").innerHTML = 'marker lost';
+    });
+  </script>
 </head>
 
 <body>
+  <div id="footer"></div>
   <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" embedded
     renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector id="scene">
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
