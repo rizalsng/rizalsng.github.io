@@ -14,10 +14,10 @@
     <a-scene renderer="logarithmicDepthBuffer: true;" embedded loading-screen="enabled: false;"
         arjs="sourceType: webcam; debugUIEnabled: false;">
         <a-assets>
-            <a-asset-item id="animated-asset" src="assets/asset.gltf"></a-asset-item>
+            <a-asset-item id="sonic" src="model/scene.gltf"></a-asset-item>
         </a-assets>
 
-        <a-entity look-at="[gps-camera]" animation-mixer="loop: repeat" gltf-model="#animated-asset"
+        <a-entity look-at="[gps-camera]" animation-mixer="clip:sc_run_loop" gltf-model="#sonic"
             scale="0.6556820791273565 0.6556820791273565 0.6556820791273565"
             gps-entity-place="latitude: -6.256951; longitude: 106.835538;"></a-entity>
 
