@@ -1,11 +1,11 @@
 Model Information:
-* title:	Flowers
-* source:	https://sketchfab.com/3d-models/flowers-e9e8b1ca9d3640f8be00b760e1fad170
-* author:	Hippocrocaduck (https://sketchfab.com/Hippocrocaduck)
+* title:	Simple Flower Loop
+* source:	https://sketchfab.com/3d-models/simple-flower-loop-a9d02b903a494b60906d44d0c855f7a3
+* author:	alexandra.m.neville (https://sketchfab.com/alexandra.m.neville)
 
 Model License:
 * license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
 * requirements:	Author must be credited. Commercial use is allowed.
 
 If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
-This work is based on "Flowers" (https://sketchfab.com/3d-models/flowers-e9e8b1ca9d3640f8be00b760e1fad170) by Hippocrocaduck (https://sketchfab.com/Hippocrocaduck) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+This work is based on "Simple Flower Loop" (https://sketchfab.com/3d-models/simple-flower-loop-a9d02b903a494b60906d44d0c855f7a3) by alexandra.m.neville (https://sketchfab.com/alexandra.m.neville) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
