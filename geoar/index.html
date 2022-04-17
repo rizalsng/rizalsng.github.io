@@ -14,7 +14,7 @@
     <a-scene vr-mode-ui="enabled: false" renderer="logarithmicDepthBuffer: true;" embedded
         loading-screen="enabled: false;" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
         <a-assets>
-            <a-asset-item id="#animated-asset" src="assets/scene.gltf"></a-asset-item>
+            <a-asset-item id="animated-asset" src="assets/scene.gltf"></a-asset-item>
         </a-assets>
         <a-entity look-at="[gps-camera]" animation-mixer="loop: repeat" gltf-model="#animated-asset" scale="15 15 15"
             gps-entity-place="latitude:-6.256842; longitude:106.852819;"></a-entity>
