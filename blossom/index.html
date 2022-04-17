@@ -27,6 +27,25 @@
       color: white;
       font-size: 3em;
     }
+
+    .arjs-loader {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .arjs-loader div {
+      text-align: center;
+      font-size: 1.25em;
+      color: white;
+    }
   </style>
 
   <script>
@@ -42,6 +61,7 @@
 
 <body>
   <div id="footer"></div>
+
   <a-scene arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;" embedded
     renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector id="scene">
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
