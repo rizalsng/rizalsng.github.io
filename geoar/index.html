@@ -11,12 +11,10 @@
 </head>
 
 <body style='margin: 0; overflow: hidden;'>
-    <a-scene vr-mode-ui="enabled: false" arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false;'>
-
-        <a-camera gps-camera=rotation-reader></a-camera>
-        <a-text value="This will always face the user." look-at="[gps-camera]" align="center" scale="100 100 100"
+    <a-scene embedded arjs='source: webcam;'>
+        <a-text value="This will always face the user." look-at="[gps-camera]" scale="100 100 100"
             gps-entity-place="latitude: -6.256842; longitude: 106.852819;"></a-text>
-        </a-camera>
+        <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
 </body>
 
