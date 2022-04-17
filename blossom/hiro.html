@@ -68,8 +68,8 @@
     <a-asset-item id="flower" src="model/scene.gltf"></a-asset-item>
     <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;"
       id="markerA">
-      <a-entity id="flower-model" gltf-model="#flower" position="0 0 0" scale="0.05 0.05 0.05" class="clickable"
-        gesture-handler>
+      <a-entity id="flower-model" gltf-model="#flower" animation-mixer="clip:Object_0" position="0 0 0"
+        scale="0.05 0.05 0.05" class="clickable" gesture-handler>
       </a-entity>
     </a-marker>
     <a-entity camera></a-entity>
