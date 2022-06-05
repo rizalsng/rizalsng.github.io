@@ -4,19 +4,75 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>GeoAR.js demo</title>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <title>RIZALsng</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="./custom.css">
+
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.js"></script>
+
+
 </head>
 
 <body>
-    <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
-        <a-text value="This content will always face you." look-at="[gps-camera]" scale="120 120 120"
-            gps-entity-place="latitude: -6.256842; longitude: 106.852819;"></a-text>
-        <a-camera gps-camera rotation-reader> </a-camera>
-    </a-scene>
+    <!-- Page Content -->
+    <section class="name-profile">
+        <div class="container text-white py-5">
+            <div>
+                <h1 class="py-4">Fachrizal Sinaga
+                </h1>
+                <p>A geographer</p>
+                <p>Working intensely at the intersection of data analysis, cartography and programming</p>
+            </div>
+            <hr>
+            <div class="py-2">
+                <a class="btn btn-light" style="background-color: white;" href="https://twitter.com/rizalsng"
+                    role="button"><i class="fab fa-twitter"></i></a>
+                <a class="btn btn-light" style="background-color: white;" href="https://github.com/rizalsng"
+                    role="button"><i class="fab fa-github"></i></a>
+                <a class="btn btn-light" style="background-color: white;" href="mailto:fachrizal.sng@gmail.com"
+                    role="button"><i class="far fa-envelope"></i></a>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="container">
+
+
+        <!-- Related Projects Row -->
+
+
+        <div class="row">
+
+            <div class="col-md-6 col-lg-6 mb-4">
+                <h3 class="my-4">Latest Blogs</h3>
+                <hr>
+                <div class="card">
+                    <div class="card-body"><a
+                            href="https://medium.com/artikula/sampan-kecil-berpendayung-bambu-tutur-perempuan-adat-dusun-lame-banding-agung-semende-dalam-545636a51a2f">Sampan
+                            Kecil Berpendayung Bambu</a></div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-6 mb-4">
+                <h3 class="my-4">Projects Showcase</h3>
+                <hr>
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
 </body>
 
 </html>
-gps-entity-place="latitude: -6.256951; longitude: 106.835538;"
