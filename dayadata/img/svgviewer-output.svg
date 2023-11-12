@@ -1,0 +1,16 @@
+<svg width="200px" height="200px" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Triangles -->
+  <!-- Each triangle is drawn with the same center point (100,100) and the vertices of the pentagon -->
+  <polygon points="100,10 100,100 190,80" fill="red"/>
+  <polygon points="190,80 100,100 160,180" fill="orange"/>
+  <polygon points="160,180 100,100 40,180" fill="green"/>
+  <polygon points="40,180 100,100 10,80" fill="blue"/>
+  <polygon points="10,80 100,100 100,10" fill="purple"/>
+
+  <!-- Labels for triangles -->
+  <text x="110" y="70" font-family="Verdana" font-size="20" fill="white">TM</text>
+  <text x="130" y="120" font-family="Verdana" font-size="20" fill="white">R</text>
+  <text x="90" y="150" font-family="Verdana" font-size="20" fill="white">CL</text>
+  <text x="60" y="70" font-family="Verdana" font-size="20" fill="white">SR</text>
+  <text x="50" y="120" font-family="Verdana" font-size="20" fill="white">CO</text>
+</svg>
