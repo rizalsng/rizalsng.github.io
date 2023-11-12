@@ -1,0 +1,5 @@
+<svg width="200px" height="200px" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="100,10 100,100 190,80" fill="param(fill) #FFF"/>
+  <!-- Labels for triangles -->
+  <text x="110" y="70" font-family="Verdana" font-size="20" fill="white">TM</text>
+</svg>
