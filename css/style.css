@@ -142,7 +142,7 @@ body {
     font-size: 4rem;
     line-height: 0.9;
     font-weight: 300;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
 }
 
@@ -155,7 +155,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     font-size: 0.75rem;
     border-top: 1px solid var(--accent);
     padding-top: 1rem;
@@ -179,7 +179,7 @@ body {
     font-style: italic;
     line-height: 1.2;
     color: var(--text-muted);
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
     opacity: 0;
     animation: fade-up 1.2s ease 0.9s forwards;
 }
@@ -191,7 +191,7 @@ body {
 
 /* List Blocks */
 .list-block { display: flex; flex-direction: column; }
-.blog-section { margin-bottom: 3rem; }
+.blog-section { margin-bottom: 2rem; }
 .project-section { margin-bottom: auto; }
 
 .item-list {
@@ -213,7 +213,7 @@ body {
     grid-template-columns: 30px minmax(0, 1fr) auto;
     text-decoration: none;
     color: var(--text-main);
-    padding: 1rem 0;
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--accent);
     transition: all 0.3s ease;
     align-items: baseline;
@@ -271,7 +271,7 @@ body {
 
 /* Footer */
 .footer {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     display: flex;
     gap: 1.5rem;
     font-size: 0.8rem;
