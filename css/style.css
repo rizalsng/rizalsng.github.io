@@ -237,6 +237,16 @@ body {
     color: var(--text-muted);
 }
 
+.project-desc {
+    grid-column: 2;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .project-item:hover,
 .project-item:focus-visible {
     border-color: var(--accent-highlight);
