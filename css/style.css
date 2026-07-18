@@ -327,6 +327,13 @@ canvas {
     transition: opacity 0.3s ease;
 }
 
+.preview-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    will-change: transform;
+}
+
 .preview-img-container {
     width: 40vw;
     max-width: 600px;
@@ -334,7 +341,36 @@ canvas {
     filter: grayscale(100%) contrast(120%);
     mix-blend-mode: lighten;
     border: 1px solid var(--text-muted);
-    will-change: transform;
+}
+
+.preview-caption {
+    width: 220px;
+    border-left: 1px solid var(--accent);
+    padding-left: 1.25rem;
+    padding-top: 0.25rem;
+}
+
+.cap-label {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.cap-title {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--accent-highlight);
+    margin-bottom: 0.75rem;
+}
+
+.cap-desc {
+    display: block;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    color: var(--text-main);
 }
 
 .preview-img-container img {

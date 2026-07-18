@@ -58,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const previewOverlay = document.querySelector('.preview-overlay');
     const previewImg = document.getElementById('preview-img');
-    const previewContainer = document.querySelector('.preview-img-container');
+    const previewTitle = document.getElementById('preview-title');
+    const previewDesc = document.getElementById('preview-desc');
+    const previewBox = document.querySelector('.preview-box');
     let targetX = 0, targetY = 0, curX = 0, curY = 0;
 
     window.addEventListener('mousemove', (e) => {
@@ -78,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (function parallax() {
             curX += (targetX - curX) * 0.06;
             curY += (targetY - curY) * 0.06;
-            if (previewContainer) {
-                previewContainer.style.transform = `translate(${curX}px, ${curY}px)`;
+            if (previewBox) {
+                previewBox.style.transform = `translate(${curX}px, ${curY}px)`;
             }
             requestAnimationFrame(parallax);
         })();
@@ -90,6 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgSrc = item.getAttribute('data-img');
             if (imgSrc) {
                 previewImg.src = imgSrc;
+                const name = item.querySelector('.project-name');
+                const desc = item.querySelector('.project-desc');
+                previewTitle.textContent = name ? name.textContent : '';
+                previewDesc.textContent = desc ? desc.textContent : '';
                 previewOverlay.style.opacity = '1';
             }
         };
