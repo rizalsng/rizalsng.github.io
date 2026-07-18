@@ -3,35 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fachrizal Sinaga | Spatial Analysis</title>
-    <meta name="description" content="Digital documentation of spatial analysis, cartography, and data visualization.">
-    
-    <!-- Typography -->
+    <title>Fachrizal Sinaga — Geographer / Developer</title>
+    <meta name="description" content="Digital documentation of spatial analysis, cartography, and data visualization by Fachrizal Sinaga.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rizalsng.github.io/">
+    <meta property="og:title" content="Fachrizal Sinaga — Geographer / Developer">
+    <meta property="og:description" content="A digital topography of the anthropocene. Spatial analysis, cartography, and data visualization.">
+    <meta property="og:image" content="https://rizalsng.github.io/assets/img/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
-    <!-- Styles -->
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Viewfinder Accents -->
     <div class="frame-accent top-left"></div>
     <div class="frame-accent top-right"></div>
     <div class="frame-accent bottom-left"></div>
     <div class="frame-accent bottom-right"></div>
 
-    <!-- Main Container -->
+    <div class="marginalia marginalia-top" aria-hidden="true">
+        <span class="marg-item">FRS — DIGITAL TOPOGRAPHY</span>
+        <span class="marg-item" id="coord-readout">6&deg;12'00"S 106&deg;49'00"E</span>
+    </div>
+    <div class="marginalia marginalia-bottom" aria-hidden="true">
+        <span class="marg-item">SHEET 01 / FRS-2026</span>
+        <span class="marg-item scale-bar">
+            <span class="scale-blocks"><i></i><i></i><i></i><i></i></span>
+            <span class="scale-label">0&thinsp;&mdash;&thinsp;100 KM</span>
+        </span>
+        <span class="marg-item" id="local-time">--:--:-- WIB</span>
+    </div>
+
+    <div class="grain" aria-hidden="true"></div>
+
     <main class="main-container">
-        
-        <!-- UI Layer (Left Content) -->
+
         <section class="ui-layer">
             <header class="header">
                 <h1 class="title">
                     <span class="title-line">FACHRIZAL</span>
                     <span class="title-line">SINAGA</span>
                 </h1>
-                
+
                 <div class="meta-data">
                     <div class="meta-item">
                         <span class="label">ROLE</span>
@@ -54,72 +73,73 @@
                 </p>
             </header>
 
-            <!-- Medium Blog Section -->
-            <nav class="blog-list" style="margin-bottom: 3rem;">
+            <section class="list-block blog-section">
                 <div class="list-header">
                     <span class="col-id">LOG</span>
                     <span class="col-name">RESEARCH LOGS</span>
                     <span class="col-year">DATE</span>
                 </div>
-                
-                <div id="medium-container">
-                    <div class="project-item" style="border:none; pointer-events: none;">
-                        <span class="project-id">--</span>
-                        <span class="project-name" style="color: var(--text-muted);">INITIALIZING DATA STREAM...</span>
-                    </div>
-                </div>
-            </nav>
 
-            <nav class="project-list" style="margin-bottom: auto;">
+                <ul class="item-list" id="medium-container">
+                    <li class="list-status">
+                        <span class="project-id">--</span>
+                        <span class="status-text">INITIALIZING DATA STREAM...</span>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="list-block project-section">
                 <div class="list-header">
                     <span class="col-id">ID</span>
                     <span class="col-name">PROJECT INDEX</span>
                     <span class="col-year">YEAR</span>
                 </div>
-                
-                <!-- Project 01 -->
-                <a href="https://simpas.id/data/" target="_blank" class="project-item" data-img="assets/img/sulsel_socfor.png">
-                    <span class="project-id">01</span>
-                    <span class="project-name">SOUTH SULAWESI SOCIAL FORESTRY</span>
-                    <span class="project-year">2022</span>
-                </a>
 
-                <!-- Project 02 -->
-                <a href="https://rizalsng.carto.com/builder/a811593b-94e3-44a5-9b2d-891dd55c4263/embed" target="_blank" class="project-item" data-img="assets/img/hotspot-map-2019.png">
-                    <span class="project-id">02</span>
-                    <span class="project-name">FOREST FIRE HOTSPOTS</span>
-                    <span class="project-year">2019</span>
-                </a>
-
-                <!-- Project 03 -->
-                <a href="https://public.tableau.com/views/IPMvsPerkebunanSawit/Dashboard1" target="_blank" class="project-item" data-img="assets/img/ipm_sawit_2016.png">
-                    <span class="project-id">03</span>
-                    <span class="project-name">HDI VS PALM OIL AREAS</span>
-                    <span class="project-year">2016</span>
-                </a>
-
-                <!-- Project 04 -->
-                <a href="https://public.tableau.com/views/DataPertambangan/Dashboard1" target="_blank" class="project-item" data-img="assets/img/mining_area_indonesia.png">
-                    <span class="project-id">04</span>
-                    <span class="project-name">MINING AREAS INDONESIA</span>
-                    <span class="project-year">2016</span>
-                </a>
-            </nav>
+                <ul class="item-list">
+                    <li>
+                        <a href="https://simpas.id/data/" target="_blank" rel="noopener noreferrer" class="project-item" data-img="assets/img/sulsel_socfor.webp">
+                            <span class="project-id">01</span>
+                            <span class="project-name">SOUTH SULAWESI SOCIAL FORESTRY</span>
+                            <span class="project-year">2022</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://rizalsng.carto.com/builder/a811593b-94e3-44a5-9b2d-891dd55c4263/embed" target="_blank" rel="noopener noreferrer" class="project-item" data-img="assets/img/hotspot-map-2019.webp">
+                            <span class="project-id">02</span>
+                            <span class="project-name">FOREST FIRE HOTSPOTS</span>
+                            <span class="project-year">2019</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://public.tableau.com/views/IPMvsPerkebunanSawit/Dashboard1" target="_blank" rel="noopener noreferrer" class="project-item" data-img="assets/img/ipm_sawit_2016.webp">
+                            <span class="project-id">03</span>
+                            <span class="project-name">HDI VS PALM OIL AREAS</span>
+                            <span class="project-year">2016</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://public.tableau.com/views/DataPertambangan/Dashboard1" target="_blank" rel="noopener noreferrer" class="project-item" data-img="assets/img/mining_area_indonesia.webp">
+                            <span class="project-id">04</span>
+                            <span class="project-name">MINING AREAS INDONESIA</span>
+                            <span class="project-year">2016</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
 
             <footer class="footer">
                 <a href="mailto:fachrizal.sng@gmail.com" class="social-link">MAIL</a>
-                <a href="https://github.com/rizalsng" target="_blank" class="social-link">GITHUB</a>
-                <a href="https://twitter.com/rizalsng" target="_blank" class="social-link">TWITTER</a>
+                <a href="https://github.com/rizalsng" target="_blank" rel="noopener noreferrer" class="social-link">GITHUB</a>
+                <a href="https://www.linkedin.com/in/fachrizalsinaga/" target="_blank" rel="noopener noreferrer" class="social-link">LINKEDIN</a>
+                <a href="https://twitter.com/rizalsng" target="_blank" rel="noopener noreferrer" class="social-link">TWITTER</a>
             </footer>
         </section>
 
-        <!-- Scene Layer (3D Background) -->
         <div id="canvas-container" class="scene-layer"></div>
 
-        <!-- Project Preview Overlay -->
         <div class="preview-overlay">
             <div class="preview-img-container">
-                <img id="preview-img" src="" alt="Project Preview">
+                <img id="preview-img" src="" alt="Project preview">
             </div>
         </div>
 
