@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacra — Deck</title>
+<meta name="description" content="Simulacra: a multi-agent AI policy simulation platform for local government. View the deck and try the interactive demo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2393c9f9'/%3E%3Crect x='2' y='2' width='28' height='28' fill='none' stroke='%23000' stroke-width='3'/%3E%3Ccircle cx='11' cy='12' r='4' fill='%23000'/%3E%3Ccircle cx='21' cy='20' r='4' fill='%23000'/%3E%3Cpath d='M11 12 L21 20' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E">
+
+<style>
+:root{
+  --border-radius: 5px;
+  --box-shadow-x: 4px;
+  --box-shadow-y: 4px;
+  --heading-font-weight: 700;
+  --base-font-weight: 500;
+
+  --background: oklch(96% 0.028 235);
+  --secondary-background: oklch(100% 0 0);
+  --foreground: oklch(0% 0 0);
+  --main-foreground: oklch(0% 0 0);
+  --main: oklch(83% 0.08 235);
+  --main-deep: oklch(70% 0.11 235);
+  --border: oklch(0% 0 0);
+
+  --shadow: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
+
+  --net-line: oklch(55% 0.1 235 / 0.14);
+  --net-node: oklch(70% 0.11 235 / 0.55);
+  --net-node-core: oklch(55% 0.13 235 / 0.7);
+  --net-node-glow: oklch(60% 0.16 235 / 0.9);
+
+  --bw: 2px;
+  --bw-thick: 3px;
+  --font-heading: "Archivo Black", "Arial Black", Impact, system-ui, sans-serif;
+  --font-base: "Space Grotesk", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--background);
+  color:var(--foreground);
+  font-family:var(--font-base);
+  font-weight:var(--base-font-weight);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{ font-family:var(--font-heading); font-weight:var(--heading-font-weight); margin:0; line-height:1.08; letter-spacing:-.02em; }
+p{ margin:0 0 .9em; }
+::selection{ background:var(--main); color:var(--main-foreground); }
+img,svg{ max-width:100%; }
+a{ color:inherit; }
+
+html{ background:var(--background); scroll-behavior:smooth; }
+#net-bg{
+  position:absolute; top:0; left:0; width:100%; z-index:0;
+  display:block; pointer-events:none;
+}
+
+.wrap{ max-width:960px; margin:0 auto; padding:48px 20px 80px; position:relative; z-index:1; }
+
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  border:var(--bw) solid var(--border); border-radius:var(--border-radius);
+  padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:.05em;
+  text-transform:uppercase; background:var(--main);
+}
+
+.hero{
+  border:var(--bw-thick) solid var(--border); border-radius:var(--border-radius);
+  background:var(--secondary-background); box-shadow:7px 7px 0 0 var(--border);
+  padding:36px 32px; text-align:center; position:relative; overflow:hidden;
+}
+.hero-logo{ width:56px; height:56px; margin:0 auto 18px; border:var(--bw) solid var(--border); border-radius:var(--border-radius); background:var(--main); display:grid; place-items:center; }
+.hero h1{ font-size:clamp(34px,6vw,58px); margin-top:16px; }
+.hero .lede{ max-width:60ch; margin:16px auto 0; font-size:16px; }
+.cta-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  white-space:nowrap; cursor:pointer; text-decoration:none;
+  border:var(--bw) solid var(--border); border-radius:var(--border-radius);
+  background:var(--main); color:var(--main-foreground);
+  box-shadow:var(--shadow);
+  font-family:var(--font-base); font-weight:700; font-size:15px;
+  padding:13px 26px; min-height:48px;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:hover{ transform:translate(var(--box-shadow-x),var(--box-shadow-y)); box-shadow:none; }
+.btn--neutral{ background:var(--secondary-background); }
+.btn--lg{ font-size:17px; padding:16px 30px; min-height:56px; font-family:var(--font-heading); letter-spacing:.01em; }
+
+.section{ margin-top:44px; }
+.block-head{ display:flex; align-items:center; gap:12px; margin:0 0 16px; }
+.block-head h2{ font-size:22px; }
+.block-head::after{ content:""; flex:1; height:var(--bw); background:var(--border); }
+
+.deck-frame-wrap{
+  border:var(--bw-thick) solid var(--border); border-radius:var(--border-radius);
+  background:var(--secondary-background); box-shadow:7px 7px 0 0 var(--border);
+  padding:10px; overflow:hidden;
+}
+.deck-frame-wrap iframe{
+  display:block; width:100%; aspect-ratio:16/9.1; border:0; border-radius:3px;
+}
+
+.contact-grid{ display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.contact-card{
+  border:var(--bw) solid var(--border); border-radius:var(--border-radius);
+  background:var(--secondary-background); box-shadow:var(--shadow);
+  padding:18px;
+}
+.contact-card .role{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+.contact-card .name{ font-family:var(--font-heading); font-size:19px; margin-top:6px; }
+.contact-card a.email{ display:inline-block; margin-top:10px; font-size:13.5px; font-weight:700; border-bottom:2px solid var(--border); }
+
+.foot{ margin-top:56px; text-align:center; font-size:12px; }
+
+@media (max-width:640px){
+  .hero{ padding:28px 20px; }
+  .contact-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="net-bg" aria-hidden="true"></canvas>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="hero-logo" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+        <circle cx="7" cy="8" r="3"/><circle cx="17" cy="16" r="3"/><circle cx="17" cy="6" r="2"/>
+        <path d="M9.5 9.6 14.6 14.6M9.4 6.6 15.1 5.8"/>
+      </svg>
+    </span>
+    <span class="badge">Deck &amp; Demo</span>
+    <h1>SIMULACRA</h1>
+    <p class="lede">A multi-agent AI policy simulation platform that models public reaction to a policy before it goes into effect — with citizen personas and social environments.</p>
+    <div class="cta-row">
+      <a class="btn btn--lg" href="/simulacra">TRY THE DEMO →</a>
+      <a class="btn btn--lg btn--neutral" href="#deck">View the Deck</a>
+      <a class="btn btn--lg btn--neutral" href="#contact">Contact Us</a>
+    </div>
+  </section>
+
+  <section class="section" id="deck">
+    <div class="block-head"><h2>Deck</h2></div>
+    <div class="deck-frame-wrap">
+      <iframe src="https://canva.link/hka9gj2ccbr12sr" allow="fullscreen" allowfullscreen loading="lazy" title="Simulacra — Canva Deck"></iframe>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="block-head"><h2>Collaborate</h2></div>
+    <p style="max-width:70ch">Interested in collaborating or want to talk further about Simulacra? Reach out.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="role">Contact Person</div>
+        <div class="name">Rendra Saputra</div>
+        <a class="email" href="mailto:blogrendraspt@gmail.com">blogrendraspt@gmail.com</a>
+      </div>
+      <div class="contact-card">
+        <div class="role">Contact Person</div>
+        <div class="name">Fachrizal Sinaga</div>
+        <a class="email" href="mailto:fachrizal.sng@gmail.com">fachrizal.sng@gmail.com</a>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Simulacra — a visual demo for presentation purposes.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('net-bg');
+  var ctx = canvas.getContext('2d');
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  var N_NODES = 1400;
+  var N_CLUSTERS = 16;
+  var nodes = [];
+  var edges = [];
+
+  var PHASE = { CLUSTERED: 'clustered', BREAKING: 'breaking', SCATTERED: 'scattered', REWIRING: 'rewiring' };
+  var phase = PHASE.CLUSTERED;
+  var phaseT = 0;
+  var phaseDur = { clustered: 4200, breaking: 2600, scattered: 2200, rewiring: 3600 };
+
+  var clusterCenters = [];
+
+  function docHeight(){
+    return Math.max(
+      document.body.scrollHeight, document.documentElement.scrollHeight,
+      document.body.offsetHeight, document.documentElement.offsetHeight,
+      window.innerHeight
+    );
+  }
+
+  function resize(){
+    W = window.innerWidth;
+    H = docHeight();
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    computeClusterCenters();
+  }
+
+  function computeClusterCenters(){
+    clusterCenters = [];
+    var pad = Math.min(W, H) * 0.05;
+    for (var i = 0; i < N_CLUSTERS; i++){
+      clusterCenters.push({
+        x: rand(pad, W - pad),
+        y: rand(pad, H - pad)
+      });
+    }
+  }
+
+  function rand(a, b){ return a + Math.random() * (b - a); }
+
+  function makeNodes(){
+    nodes = [];
+    for (var i = 0; i < N_NODES; i++){
+      var cl = i % N_CLUSTERS;
+      var pulse = Math.random() < 0.06;
+      nodes.push({
+        x: rand(0, W), y: rand(0, H),
+        cluster: cl,
+        nextCluster: cl,
+        driftX: 0, driftY: 0,
+        r: rand(2.6, 5.4),
+        wobblePhase: rand(0, Math.PI * 2),
+        wobbleSpeed: rand(0.08, 0.16),
+        jitterScale: rand(0.35, 1.7),
+        pulse: pulse,
+        pulsePeriod: pulse ? rand(4200, 9000) : 0,
+        pulseOnFrac: pulse ? rand(0.16, 0.28) : 0,
+        pulseOffset: pulse ? rand(0, 9000) : 0
+      });
+    }
+  }
+
+  function reassignClusters(){
+    var order = [];
+    for (var i = 0; i < N_NODES; i++) order.push(i % N_CLUSTERS);
+    // shuffle
+    for (var j = order.length - 1; j > 0; j--){
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = order[j]; order[j] = order[k]; order[k] = tmp;
+    }
+    for (var n = 0; n < N_NODES; n++){
+      nodes[n].nextCluster = order[n];
+    }
+  }
+
+  function commitClusters(){
+    for (var i = 0; i < N_NODES; i++) nodes[i].cluster = nodes[i].nextCluster;
+  }
+
+  function rebuildEdges(mode){
+    edges = [];
+    if (mode === 'cluster'){
+      for (var c = 0; c < N_CLUSTERS; c++){
+        var members = [];
+        for (var i = 0; i < N_NODES; i++) if (nodes[i].cluster === c) members.push(i);
+        for (var m = 0; m < members.length; m++){
+          var links = 1 + Math.floor(Math.random() * 2);
+          for (var l = 0; l < links; l++){
+            var other = members[Math.floor(Math.random() * members.length)];
+            if (other !== members[m]) edges.push([members[m], other]);
+          }
+        }
+        // a couple of bridges between clusters, for texture
+        if (c > 0){
+          var prevMembers = [];
+          for (var p = 0; p < N_NODES; p++) if (nodes[p].cluster === c - 1) prevMembers.push(p);
+          if (members.length && prevMembers.length){
+            for (var bIdx = 0; bIdx < 2; bIdx++){
+              edges.push([
+                members[Math.floor(Math.random() * members.length)],
+                prevMembers[Math.floor(Math.random() * prevMembers.length)]
+              ]);
+            }
+          }
+        }
+      }
+    } else {
+      // random mesh for scattered/rewiring states
+      var count = Math.floor(N_NODES * 1.1);
+      for (var e = 0; e < count; e++){
+        var a = Math.floor(Math.random() * N_NODES);
+        var b = Math.floor(Math.random() * N_NODES);
+        if (a !== b) edges.push([a, b]);
+      }
+    }
+  }
+
+  function setPhase(p){
+    phase = p;
+    phaseT = 0;
+    if (p === PHASE.CLUSTERED){
+      rebuildEdges('cluster');
+    } else if (p === PHASE.BREAKING){
+      // anchor each node roughly where it is, so the scatter stays local
+      // rather than migrating everyone toward one spot on a tall page
+      for (var i = 0; i < N_NODES; i++){
+        nodes[i].driftX = nodes[i].x + rand(-90, 90);
+        nodes[i].driftY = nodes[i].y + rand(-90, 90);
+      }
+      rebuildEdges('sparse');
+    } else if (p === PHASE.SCATTERED){
+      rebuildEdges('sparse');
+      reassignClusters();
+    } else if (p === PHASE.REWIRING){
+      commitClusters();
+      rebuildEdges('cluster');
+    }
+  }
+
+  function targetFor(node){
+    if (phase === PHASE.CLUSTERED){
+      return clusterCenters[node.cluster];
+    }
+    if (phase === PHASE.REWIRING){
+      return clusterCenters[node.cluster];
+    }
+    // breaking / scattered: drift locally around where the node broke away
+    return { x: node.driftX, y: node.driftY };
+  }
+
+  var elapsed = 0;
+
+  function step(dt){
+    elapsed += dt;
+    phaseT += dt;
+    var order = [PHASE.CLUSTERED, PHASE.BREAKING, PHASE.SCATTERED, PHASE.REWIRING];
+    var idx = order.indexOf(phase);
+    if (phaseT > phaseDur[phase]){
+      setPhase(order[(idx + 1) % order.length]);
+    }
+
+    for (var i = 0; i < N_NODES; i++){
+      var n = nodes[i];
+      var t = targetFor(n);
+      // rate of approach toward the target — higher = tighter/faster settle, no overshoot
+      var rate = (phase === PHASE.CLUSTERED) ? 0.0016 : (phase === PHASE.REWIRING ? 0.0011 : 0.00042);
+      // base spread per phase, scaled per-node so a cluster fills out as a loose
+      // blob instead of every node orbiting the same tight ring
+      var jitterBase = (phase === PHASE.CLUSTERED) ? 85 : (phase === PHASE.REWIRING ? 95 : 120);
+      var jitterR = jitterBase * n.jitterScale;
+
+      n.wobblePhase += n.wobbleSpeed * dt * 0.001;
+      var jx = Math.cos(n.wobblePhase) * jitterR;
+      var jy = Math.sin(n.wobblePhase * 1.3) * jitterR;
+
+      var tx = t.x + jx, ty = t.y + jy;
+
+      // exponential (critically-damped) approach — frame-rate independent, never overshoots
+      var k = 1 - Math.exp(-rate * dt);
+      n.x += (tx - n.x) * k;
+      n.y += (ty - n.y) * k;
+
+      if (n.x < -20) n.x = -20; if (n.x > W + 20) n.x = W + 20;
+      if (n.y < -20) n.y = -20; if (n.y > H + 20) n.y = H + 20;
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--net-line') || 'rgba(70,140,200,0.14)';
+    for (var e = 0; e < edges.length; e++){
+      var a = nodes[edges[e][0]], b = nodes[edges[e][1]];
+      if (!a || !b) continue;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    var nodeFill = getComputedStyle(document.documentElement).getPropertyValue('--net-node') || 'rgba(70,140,200,0.5)';
+    var coreFill = getComputedStyle(document.documentElement).getPropertyValue('--net-node-core') || 'rgba(40,110,180,0.7)';
+    var glowFill = getComputedStyle(document.documentElement).getPropertyValue('--net-node-glow') || 'rgba(40,110,180,0.9)';
+
+    for (var i = 0; i < N_NODES; i++){
+      var n = nodes[i];
+      if (n.pulse) continue; // drawn in a second pass, on top
+      ctx.beginPath();
+      ctx.fillStyle = (i % 7 === 0) ? coreFill : nodeFill;
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // pulsing nodes — a quick blinking flash, on a second pass so it isn't
+    // occluded by the plain nodes drawn above
+    for (var p = 0; p < N_NODES; p++){
+      var pn = nodes[p];
+      if (!pn.pulse) continue;
+
+      var localT = (elapsed + pn.pulseOffset) % pn.pulsePeriod;
+      var onWindow = pn.pulsePeriod * pn.pulseOnFrac;
+      var s = 0; // 0 = off (dim, resting dot), 1 = full flash
+      if (localT < onWindow){
+        // triangular envelope: quick ramp up then down within the on-window
+        s = 1 - Math.abs((localT / onWindow) * 2 - 1);
+      }
+
+      if (s > 0.02){
+        var pr = pn.r * (1 + s * 1.1);
+        ctx.beginPath();
+        ctx.fillStyle = glowFill;
+        ctx.globalAlpha = s * 0.85;
+        ctx.arc(pn.x, pn.y, pr * 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = glowFill;
+        ctx.arc(pn.x, pn.y, pr, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // resting state — a plain small dot, same as non-pulsing nodes
+        ctx.beginPath();
+        ctx.fillStyle = nodeFill;
+        ctx.arc(pn.x, pn.y, pn.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  var lastTime = 0;
+  var running = true;
+
+  function frame(ts){
+    if (!running) return;
+    if (!lastTime) lastTime = ts;
+    var dt = Math.min(ts - lastTime, 48);
+    lastTime = ts;
+    step(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function drawStatic(){
+    setPhase(PHASE.CLUSTERED);
+    for (var i = 0; i < N_NODES; i++){
+      var n = nodes[i];
+      var c = clusterCenters[n.cluster];
+      n.x = c.x + rand(-30, 30);
+      n.y = c.y + rand(-30, 30);
+    }
+    draw();
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    running = !document.hidden && !REDUCED;
+    if (running){ lastTime = 0; requestAnimationFrame(frame); }
+  });
+
+  window.addEventListener('resize', function(){
+    resize();
+    if (REDUCED) drawStatic();
+  });
+
+  // the deck iframe and web fonts can change document height after first paint —
+  // keep the canvas (and cluster spread) matched to the full page
+  var lastDocH = 0;
+  setInterval(function(){
+    var h = docHeight();
+    if (Math.abs(h - lastDocH) > 40){
+      lastDocH = h;
+      resize();
+      if (REDUCED) drawStatic();
+    }
+  }, 1000);
+
+  resize();
+  lastDocH = H;
+  makeNodes();
+  setPhase(PHASE.CLUSTERED);
+
+  if (REDUCED){
+    running = false;
+    drawStatic();
+  } else {
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+
+</body>
+</html>
