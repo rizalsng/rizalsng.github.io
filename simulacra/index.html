@@ -489,8 +489,6 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; background:var(--m
         </div>
       </div>
 
-      <div class="grid g4 mt" id="stats"></div>
-
       <div class="mt scn-band" id="scn-band">
         <div class="row">
           <h3 data-i18n="scn.title">READY-TO-RUN SCENARIOS</h3>
@@ -788,12 +786,6 @@ en:{
   'hero.lede':'Simulacra builds a digital twin of a region: thousands of AI agents with their own personas, memory, and behavioural logic — assembled from ethnographic fieldwork, Satu Data Indonesia, and Satu Peta. A policy is run inside that world first, so local government can see public reaction, points of friction, and escalation pathways before the regulation is ever issued.',
   'hero.cta1':'START A NEW SIMULATION →', 'hero.cta2':'See Example Scenarios',
   pipe:['01 · Seed Material','02 · Knowledge Graph','03 · Persona Generation','04 · Social Simulation','05 · Prediction Report'],
-  stats:[
-    {k:'Agents Simulated', s:'Across all projects'},
-    {k:'Scenarios Tested', s:'Since January 2026'},
-    {k:'Regencies / Cities', s:'Across 5 provinces'},
-    {k:'Sentiment Accuracy', s:'Validated against 12 cases'}
-  ],
   'scn.title':'READY-TO-RUN SCENARIOS', 'scn.badge':'Click to load',
   'scn.lede':'Five local-government policy cases, each prepared with its own seed material, personas, and simulation parameters. Pick one to run the full pipeline immediately.',
   'scn.risk':'Risk', 'scn.cta':'Click to load',
@@ -913,12 +905,6 @@ id:{
   'hero.lede':'Simulacra membangun kembar digital dari sebuah wilayah: ribuan agent AI dengan persona, memori, dan logika perilaku sendiri — disusun dari data etnografi, Satu Data Indonesia, dan Satu Peta. Kebijakan dijalankan di dalam dunia itu lebih dulu, sehingga pemerintah daerah bisa melihat reaksi masyarakat, titik gesekan, dan jalur eskalasi sebelum aturan benar-benar diterbitkan.',
   'hero.cta1':'MULAI SIMULASI BARU →', 'hero.cta2':'Lihat Contoh Skenario',
   pipe:['01 · Seed Material','02 · Knowledge Graph','03 · Generasi Persona','04 · Simulasi Sosial','05 · Laporan Prediksi'],
-  stats:[
-    {k:'Agent Tersimulasi', s:'Akumulasi seluruh proyek'},
-    {k:'Skenario Diuji', s:'Sejak Januari 2026'},
-    {k:'Kabupaten / Kota', s:'Tersebar di 5 provinsi'},
-    {k:'Akurasi Sentimen', s:'Validasi terhadap 12 kasus'}
-  ],
   'scn.title':'CONTOH SKENARIO SIAP COBA', 'scn.badge':'Klik untuk memuat',
   'scn.lede':'Lima kasus kebijakan daerah yang sudah disiapkan lengkap dengan seed material, persona, dan parameter simulasinya. Pilih satu untuk langsung menjalankan alur penuh.',
   'scn.risk':'Risiko', 'scn.cta':'Klik untuk memuat',
@@ -2212,7 +2198,7 @@ function setLang(lang){
 /* Re-renders every dynamically built region. Used on language switch, so the
    feed and report survive the swap instead of being wiped. */
 function rerenderAll(){
-  renderNav(); renderStats(); renderScenarioCards(); renderHow(); renderSrcBox();
+  renderNav(); renderPipeline(); renderScenarioCards(); renderHow(); renderSrcBox();
   renderSources(); renderQuickQ(); syncParamUI();
   $('btn-pause').textContent = state.sim.paused ? t('btn.resume') : t('btn.pause');
   $('sim-status-text').textContent = t(
@@ -2285,42 +2271,10 @@ function goTo(id){
 /* ========================================================================= */
 /* 01 — Dashboard                                                             */
 /* ========================================================================= */
-var STAT_VALUES = [
-  {v:12480, c:'var(--chart-1)'},
-  {v:37,    c:'var(--chart-2)'},
-  {v:8,     c:'var(--chart-4)'},
-  {v:91,    c:'var(--chart-3)', suf:'%'}
-];
-
-function renderStats(){
-  var wrap = $('stats');
-  clear(wrap);
-  STAT_VALUES.forEach(function(st, i){
-    var meta = tl('stats')[i];
-    var c = el('div', 'stat');
-    c.style.background = st.c;
-    var v = el('div', 'v', '0');
-    c.appendChild(v);
-    c.appendChild(el('div', 'k', meta.k));
-    c.appendChild(el('div', 's muted', meta.s));
-    wrap.appendChild(c);
-    countUp(v, st.v, st.suf || '');
-  });
+function renderPipeline(){
   var pw = $('pipeline');
   clear(pw);
   tl('pipe').forEach(function(p){ pw.appendChild(el('span', null, p)); });
-}
-
-function countUp(node, target, suffix){
-  if(REDUCED){ node.textContent = num(target) + suffix; return; }
-  var start = performance.now(), dur = 900;
-  function frame(now){
-    var p = Math.min(1, (now - start) / dur);
-    var e = 1 - Math.pow(1 - p, 3);
-    node.textContent = num(Math.round(target * e)) + suffix;
-    if(p < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
 }
 
 function renderHow(){
@@ -3201,7 +3155,7 @@ $('tab-balaiwarga').addEventListener('click', function(){ switchTab('b'); });
 /* ========================================================================= */
 applyStaticLang();
 renderNav();
-renderStats();
+renderPipeline();
 renderScenarioCards();
 renderHow();
 renderSrcBox();
