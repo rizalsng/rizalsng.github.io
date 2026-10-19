@@ -18,15 +18,33 @@ hardcoded illustrative content.
 
 **Bilingual: English is the default**, Bahasa Indonesia via the EN/ID switch in the sidebar.
 
-The UX follows MiroFish's five-stage pipeline, contextualised for policy making:
+The UX follows MiroFish's five-stage pipeline, contextualised for policy making and aligned with
+the presentation deck (Local sources → OCM coding → Simulation state → Decision model → Policy
+report). MiroFish is an internal reference only — do not name it in user-visible text.
 
 | MiroFish stage | Simulacra section |
 |---|---|
-| Graph Building — seed extraction, memory injection, GraphRAG | 02 Seed Material |
-| Environment Setup — entity extraction, persona generation | 03 Personas & Environment |
+| Graph Building — seed extraction, memory injection, GraphRAG | 02 Local Sources (incl. OCM coding in the extraction log) |
+| Environment Setup — entity extraction, persona generation | 03 Simulation State (personas = component *d*) |
 | Simulation — dual-platform parallel simulation | 04 Scenario Setup + 05 Running Simulation |
 | Report Generation — ReportAgent | 06 Report & Insights |
 | Deep Interaction — God View, chat with agents | **out of scope**, deliberately omitted |
+
+### The decision state
+
+Every agent decision is framed as `p_K(y | s)`, `s = (d, h, z, a)`:
+
+- **d** persona — scenario `personas`, each with `src` codes (OCM / BPS / Satu Peta / ethnography / news).
+- **h** content as received — global choice `UI[lang].chan`, stored in `state.h`.
+- **z** situation — global choice `UI[lang].situ`, stored in `state.z`.
+- **a** policy option — scenario `arms`; arm 0 is the policy as drafted and is always on (`state.arms`).
+- **y ∈ Y** — scenario `decision.y`, a fixed list of four local responses ordered from most
+  compliant (0) to most confrontational (3). `Y_FILL` colours follow that order.
+
+`h` and `z` shift points between y[0] and y[3] via `H_SHIFT` / `Z_SHIFT` (`armRows()`); this is
+illustrative, like every number in the demo. The report shows the arms table (`renderArms()`),
+80% ranges on percentage stats, and an evidence record (`renderEvidence()`). Emergent events carry
+a ✱ flag: peer influence is the least validated component, and the UI must keep saying so.
 
 There is **no file-upload UI**. Seed material is expressed through the four data-source
 toggles plus the policy-context textarea. Do not reintroduce a dropzone.
@@ -74,7 +92,9 @@ If the design genuinely needs something new, pull it from a neobrutalism.dev pal
 rather than eyeballing a hex value.
 
 Accent colours are referenced through maps near the top of the script — `SENT_CLASS`,
-`RISK_CLASS`, `RISK_FILL`, `ACCENT_VAR`, `NODE_FILL` — not hardcoded at call sites.
+`RISK_CLASS`, `RISK_FILL`, `ACCENT_VAR`, `NODE_FILL`, `Y_FILL` — not hardcoded at call sites.
+OCM category names live in `OCM_NAMES` (major-section level) and non-OCM source labels in
+`SRC_NAMES`.
 
 ## Internationalisation
 
@@ -91,7 +111,7 @@ which walks three attributes:
 
 Read from JS with `t('key')` (supports `{placeholders}`: `t('ev.day', {d: 3})`) or `tl('key')`
 for the array/list entries (`pipe`, `stats`, `how`, `srcbox`, `sources`, `legend`, `intensity`,
-`cfg`). Every key must exist in **both** `UI.en` and `UI.id`.
+`cfg`, `chan`, `situ`). Every key must exist in **both** `UI.en` and `UI.id`.
 
 **2. `SCENARIOS` — scenario content.** Structure (coordinates, numbers, indices) is written
 **once**; every user-visible string is a pair built with `B(en, id)` and resolved at render
@@ -121,10 +141,14 @@ add it to `rerenderAll()` or it will keep the old language.
   sources:  {etno, satudata, satupeta, sekunder},   // B() record-count labels
   log:      [[B(text), 'ok'|'wr'|'dim']],      // terminal lines during graph building
   personas: [{n, h, age, trust, infl, econ,    // plain values
+              src,                             // ['BPS','OCM 240',…] — keys of SRC_NAMES or 'OCM nnn'
               role, place, tags, bio, quote, net}],  // B() pairs
   graph:    {nodes:[{id, t, x, y, l:B([lines]), d:B()}], edges:[[from, to, B(label)]]},
   question, quickQ,                            // B() pairs
-  params:   {agents, days, intensity:0..3, media, weight},   // authored defaults
+  ocm:      {passages, cats, review, top:[[code, count]×5]},   // OCM coding step in the log
+  decision: {q:B(), y:B([4 responses])},       // answer space Y, compliant → confrontational
+  arms:     [{k:B(), v:[[mid,lo,hi]×4]}×3],    // a; arm 0 = as drafted; mids sum to 100
+  params:   {agents, days, intensity:0..3, media, weight},   // authored defaults (weight is no longer shown)
   posts:    [{pi|who, plat:'w'|'b', day, title?, text, sent, kids?}],
   events:   [{d, t:B()}],
   report:   {stats[4], paras[], groups[], timeline[], risks[], recs[]}
@@ -154,6 +178,8 @@ Notes:
 3. Sanity-check: every `edges` endpoint resolves to a node `id`, no orphan nodes, every `pi`
    in range, no `day` beyond `params.days`, every `B()` filled in both languages, and no graph
    node overlap in either language.
+4. Give every persona a `src` list, add `ocm`, `decision`, and exactly three `arms` whose `mid`
+   values sum to 100 per arm. Any new OCM code must be added to `OCM_NAMES`.
 
 Content should read like real civic conversation. In Indonesian, local terms (SPPT, musrenbang,
 NJOP, alun-alun) belong in the text naturally rather than as decoration; the English should
@@ -210,6 +236,9 @@ Checklist:
 5. Turn off all data sources → build is blocked with a toast. Turn off both platforms → run is
    blocked; one platform → only that feed fills.
 6. 390px viewport in both languages: sidebar becomes a horizontal bar, language switch stays
-   reachable, no horizontal page scroll.
+   reachable, no horizontal page scroll. (`.split` collapses with `!important` because some
+   sections set their column ratio inline.)
 7. Keyboard only (Tab + Enter) through every section, including graph nodes.
 8. macOS Reduce Motion on → animations off, all content still renders.
+9. Decision state: toggling arms B/C, content (h), and situation (z) updates the configuration
+   summary and, after a run, the arms table and evidence record — in both languages.

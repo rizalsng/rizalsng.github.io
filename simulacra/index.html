@@ -402,8 +402,28 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; background:var(--m
 .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
 /* ---------- responsive ---------------------------------------------------- */
+/* Decision state (setup) + policy-option table (report) */
+.formula{ display:inline-block; font-family:var(--font-heading); font-size:17px; border:var(--bw) solid var(--border); border-radius:var(--border-radius); background:var(--background); padding:6px 12px; margin:2px 0 4px; }
+.formula sub{ font-size:.6em; }
+.choices{ display:flex; flex-wrap:wrap; gap:8px; }
+.choice{ cursor:pointer; border:var(--bw) solid var(--border); border-radius:var(--border-radius); background:var(--secondary-background); color:var(--foreground); font-family:var(--font-base); font-weight:700; font-size:12px; padding:6px 10px; text-align:left; transition:transform .12s ease, box-shadow .12s ease; }
+.choice[aria-pressed="true"]{ background:var(--main); box-shadow:var(--shadow); }
+.choice:not(:disabled):hover{ transform:translate(-2px,-2px); box-shadow:var(--shadow); }
+.choice:disabled{ cursor:default; }
+.arms-wrap{ overflow-x:auto; }
+.arms{ width:100%; border-collapse:collapse; font-size:12.5px; min-width:560px; }
+.arms th, .arms td{ text-align:left; vertical-align:top; padding:9px 8px; border-bottom:1.5px dashed var(--border); }
+.arms tr:last-child td{ border-bottom:0; }
+.arms th{ font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.arms .sw{ display:inline-block; width:10px; height:10px; border:1.5px solid var(--border); border-radius:2px; margin-right:5px; vertical-align:-1px; }
+.arms .pc{ font-family:var(--font-heading); font-size:17px; font-variant-numeric:tabular-nums; }
+.arms .rg{ font-size:11px; font-variant-numeric:tabular-nums; }
+.stackbar{ display:flex; height:14px; margin-top:7px; border:var(--bw) solid var(--border); border-radius:3px; overflow:hidden; max-width:220px; }
+.stackbar i{ display:block; height:100%; border-right:1.5px solid var(--border); }
+.stackbar i:last-child{ border-right:0; }
+
 @media (max-width:1080px){
-  .split{ grid-template-columns:1fr; }
+  .split{ grid-template-columns:1fr !important; }   /* beats the inline column ratios on individual sections */
   .graph-wrap,.events{ position:static; }
   .g4{ grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
@@ -609,6 +629,32 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; background:var(--m
           </div>
 
           <div class="card pad">
+            <div class="block-head"><h3 data-i18n="st.title">Decision State</h3></div>
+            <p style="font-size:12.5px" class="muted" data-i18n="st.lede"></p>
+            <div class="formula" aria-hidden="true">p<sub>K</sub>(y | d, h, z, a)</div>
+
+            <div class="param">
+              <div class="hd"><b data-i18n="st.a">Policy options to compare (a)</b></div>
+              <div class="choices" id="st-arms"></div>
+              <p class="hint muted" data-i18n="st.a.h"></p>
+            </div>
+            <div class="param">
+              <div class="hd"><b data-i18n="st.h">Content as received (h)</b></div>
+              <div class="choices" id="st-h" role="group" data-i18n-aria="st.h" aria-label="Content as received"></div>
+              <p class="hint muted" data-i18n="st.h.h"></p>
+            </div>
+            <div class="param">
+              <div class="hd"><b data-i18n="st.z">Situation (z)</b></div>
+              <div class="choices" id="st-z" role="group" data-i18n-aria="st.z" aria-label="Situation"></div>
+              <p class="hint muted" data-i18n="st.z.h"></p>
+            </div>
+            <div class="param">
+              <div class="hd"><b data-i18n="st.d">Personas (d)</b></div>
+              <p class="hint muted" id="st-d" style="margin-top:0"></p>
+            </div>
+          </div>
+
+          <div class="card pad">
             <div class="block-head"><h3 data-i18n="plat.title">Simulation Platforms</h3></div>
             <p style="font-size:12.5px" class="muted" data-i18n="plat.lede"></p>
             <div class="grid g2" style="gap:11px">
@@ -657,11 +703,6 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; background:var(--m
               <p class="hint muted" data-i18n="param.media.h"></p>
             </div>
 
-            <div class="param">
-              <div class="hd"><b data-i18n="param.weight">Factor Weighting</b><span class="val" id="v-weight">Economic 60%</span></div>
-              <input type="range" id="p-weight" min="0" max="100" step="5" value="60" data-i18n-aria="param.weight" aria-label="Economic versus sociocultural weighting">
-              <p class="hint muted" style="display:flex;justify-content:space-between"><span data-i18n="param.weight.l"></span><span data-i18n="param.weight.r"></span></p>
-            </div>
           </div>
 
           <div class="card pad card--cream">
@@ -726,6 +767,7 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; background:var(--m
 
         <div class="events">
           <div class="block-head"><h3 data-i18n="ev.title">Emergent Events</h3></div>
+          <p class="muted" style="font-size:11.5px;margin:-4px 0 10px" data-i18n="ev.flag"></p>
           <div id="event-list"></div>
         </div>
       </div>
@@ -783,19 +825,19 @@ en:{
 
   'hero.badge1':'Prototype Demo', 'hero.badge2':'v0.4 — August 2026',
   'hero.title':'Test the policy before the public tests it.',
-  'hero.lede':'Simulacra builds a digital twin of a region: thousands of AI agents with their own personas, memory, and behavioural logic — assembled from ethnographic fieldwork, Satu Data Indonesia, and Satu Peta. A policy is run inside that world first, so local government can see public reaction, points of friction, and escalation pathways before the regulation is ever issued.',
+  'hero.lede':'Simulacra builds a digital twin of a region: thousands of AI agents with their own personas, memory, and behavioural logic — assembled from ethnographic fieldwork coded with the Outline of Cultural Materials, Satu Data Indonesia, and Satu Peta. A policy is run inside that world first, so local government can see public reaction, points of friction, and escalation pathways before the regulation is ever issued.',
   'hero.cta1':'START A NEW SIMULATION →', 'hero.cta2':'See Example Scenarios',
-  pipe:['01 · Seed Material','02 · Knowledge Graph','03 · Persona Generation','04 · Social Simulation','05 · Prediction Report'],
+  pipe:['01 · Local Sources','02 · OCM Coding','03 · Simulation State','04 · Decision Model','05 · Policy Report'],
   'scn.title':'READY-TO-RUN SCENARIOS', 'scn.badge':'Click to load',
   'scn.lede':'Five local-government policy cases, each prepared with its own seed material, personas, and simulation parameters. Pick one to run the full pipeline immediately.',
   'scn.risk':'Risk', 'scn.cta':'Click to load',
   'how.title':'How It Works',
   how:[
-    ['Seed material','policy drafts, village planning minutes, field notes, and spatial data are ingested as raw input.'],
-    ['Knowledge graph','entities (actors, territories, issues, rules) and their relationships are extracted, so agents cannot hallucinate outside the real context.'],
-    ['Persona generation','the agent population is shaped by the demographics, power structures, and cultural context held in the graph.'],
-    ['Social simulation','agents interact across two platforms — a microblog and a threaded forum — forming opinions, coalitions, and resistance.'],
-    ['Prediction report','emergent patterns are distilled into predictions, risks, and mitigation options.']
+    ['Local sources','policy drafts, village planning minutes, interviews, statistics, and spatial data are gathered as raw input.'],
+    ['OCM coding','every passage is tagged with Outline of Cultural Materials codes (Yale HRAF), so local knowledge is comparable, retrievable, and auditable.'],
+    ['Simulation state','each agent decision is grounded as s = (d, h, z, a): the persona, the policy as residents receive it, the situation, and the policy option being tested.'],
+    ['Decision model','agents choose from a fixed, labelled set of local responses while interacting on a microblog and a threaded forum.'],
+    ['Policy report','responses are compared across policy options, with ranges and an evidence record of what was and was not validated.']
   ],
   'srcbox.title':'Data Sources',
   'srcbox.lede':'Personas and environments are not invented. Every agent is derived from a combination of:',
@@ -808,7 +850,7 @@ en:{
   'srcbox.note':'Note: this page is an interface demo. No AI model actually runs; every figure, persona, and conversation is illustrative.',
 
   'step.1':'STAGE 01','step.2':'STAGE 02','step.3':'STAGE 03','step.4':'STAGE 04','step.5':'STAGE 05',
-  'h.input':'Seed Material',
+  'h.input':'Local Sources',
   'sub.input':'Choose the sources that build the simulated world. The richer the material, the more grounded the agent behaviour.',
   'btn.changeScn':'Change Scenario',
   'srcsel.title':'Select Data Sources',
@@ -816,7 +858,7 @@ en:{
   'ctx.title':'Policy Context','ctx.label':'Policy summary & field situation',
   'ctx.ph':'e.g. The regency plans to adjust land and building tax rates from the next fiscal year…',
   'term.title':'Extraction Log','term.aria':'Extraction process log','term.idle':'$ simulacra ready — awaiting seed material…',
-  'btn.build':'BUILD KNOWLEDGE GRAPH →','build.hint':'Select at least one data source to continue.',
+  'btn.build':'CODE WITH OCM & BUILD STATE →','build.hint':'Select at least one data source to continue.',
   sources:[
     ['Ethnographic Data','In-depth interviews, field notes, oral history, and social relationship mapping at village level.'],
     ['Satu Data Indonesia','BPS statistics, civil registry data, and standardised sectoral data from the regency.'],
@@ -824,9 +866,9 @@ en:{
     ['Secondary Data','News coverage, public discourse, village planning minutes, and prior policy archives.']
   ],
 
-  'h.persona':'Personas & Environment',
-  'sub.persona':'The agent population is generated from the knowledge graph. Click a card for background, signature quote, and network position.',
-  'pop.title':'Agent Population','kg.title':'Knowledge Graph','kg.aria':'Relationship diagram of policy entities',
+  'h.persona':'Simulation State',
+  'sub.persona':'The persona component d of every decision state, generated from OCM-coded sources and the knowledge graph. Click a card for background, network position, and the sources it is grounded in.',
+  'pop.title':'Personas (d)','kg.title':'Knowledge Graph','kg.aria':'Relationship diagram of policy entities',
   'persona.count':'{n} archetypes',
   legend:['Government','Policy Issue','Citizen Group','Object / Rule'],
   'graph.idle':'Hover a node to highlight its relationships.',
@@ -836,10 +878,10 @@ en:{
   'btn.toSetup':'CONTINUE TO SCENARIO SETUP →','btn.back':'← Back',
 
   'h.setup':'Scenario Setup',
-  'sub.setup':'Define the policy question you want answered and tune the parameters of the simulated world.',
+  'sub.setup':'Define the policy question, then choose the parts of the decision state to test: policy options (a), content as received (h), and situation (z).',
   'q.title':'Policy Question','q.label':'What do you want to find out?',
   'plat.title':'Simulation Platforms',
-  'plat.lede':'The simulation runs in parallel across two kinds of conversational space, mirroring the dual-platform architecture in MiroFish.',
+  'plat.lede':'The simulation runs in parallel across two kinds of conversational space.',
   'plat.w':'Fast microblog — spontaneous reaction, hashtags, wide spread',
   'plat.b':'Threaded forum — long-form debate, argument consolidation',
   'param.title':'Simulation Parameters',
@@ -851,7 +893,7 @@ en:{
   intensity:['Low','Medium','High','Extreme'],
   'unit.days':'days','unit.agents':'agents',
   'cfg.title':'Configuration Summary',
-  cfg:['Scenario','Region','Agent population','Time span','Intensity','Media reach','Factor weighting','Platforms','Data sources'],
+  cfg:['Scenario','Region','Agent population','Time span','Intensity','Media reach','Content (h)','Situation (z)','Policy options (a)','Platforms','Data sources'],
   'cfg.none':'not selected','cfg.weight':'Economic {a}% / Sociocultural {b}%','cfg.srcActive':'{n} sources active',
   'cfg.est':'Estimated compute load: {n} agent interactions. In this demo the simulation is compressed to under a minute.',
   'btn.run':'▶ RUN SIMULATION',
@@ -862,7 +904,7 @@ en:{
   'progress.aria':'Simulation progress','progress.label':'DAY {d} / {t}  ·  {p}%',
   'm.agents':'Active Agents','m.inter':'Total Interactions','m.sent':'Sentiment Index',
   'speed.aria':'Simulation speed','tabs.aria':'Platform',
-  'ev.title':'Emergent Events','ev.waiting':'WAITING',
+  'ev.title':'Emergent Events ✱','ev.waiting':'WAITING',
   'ev.waitingText':'Events appear when a threshold of collective behaviour is crossed.',
   'ev.day':'DAY {d}','feed.empty':'Waiting for the simulation to start…',
   'post.day':'day {d}',
@@ -890,7 +932,41 @@ en:{
   't.question':'Question updated.',
   't.download':'Report prepared — this is a demo, no file was actually created.',
   't.lang':'Language switched to English.',
-  'btn.building':'BUILDING…'
+  'btn.building':'BUILDING…',
+
+  'ocm.log':'OCM coding: {p} passages tagged across {c} categories',
+  'ocm.review':'{n} passages without a confident OCM code — queued for manual review',
+  'modal.src':'Grounded in (persona d)',
+  'modal.meters':'Scores are estimated from the coded sources above and describe an archetype, not a real individual.',
+  'st.title':'Decision State',
+  'st.lede':'Every agent decision is a state s = (d, h, z, a) answered from a fixed set of local responses y. Choose what to vary.',
+  'st.a':'Policy options to compare (a)',
+  'st.a.h':'Option A is the policy as drafted and is always included as the baseline.',
+  'st.h':'Content as received (h)',
+  'st.h.h':'How the policy reaches residents: who delivers it, and through which channel.',
+  chan:['Official announcement only','Through village / ward heads','Community deliberation first'],
+  'st.z':'Situation (z)',
+  'st.z.h':'The moment the policy lands in. Economic pressure: lean season or price rises. Sensitive period: religious holidays or election season.',
+  situ:['Normal period','Economic pressure','Sensitive period'],
+  'st.d':'Personas (d)',
+  'st.d.v':'{n} archetypes from Stage 02, grounded in {p} OCM-coded passages.',
+  'st.d.none':'Load a scenario and build the state first.',
+  'cfg.arms':'{n} compared',
+  'ev.flag':'✱ Peer influence is the least validated part of any agent-based simulation. Treat these events as hypotheses to check, not forecasts.',
+  'rep.arms':'Responses by Policy Option',
+  'rep.arms.lede':'Decision asked of every agent: “{q}” Each cell is the estimated share of agents choosing that response.',
+  'rep.arms.opt':'Policy option',
+  'rep.arms.base':'baseline',
+  'rep.arms.adj':'Adjusted for content “{h}” and situation “{z}”.',
+  'rep.arms.note':'Ranges show the 10th–90th percentile across repeated runs. Illustrative in this demo.',
+  'rep.range':'80% range {a}–{b}%',
+  'rep.evidence':'Evidence Record',
+  'evd.valid':'Validated against','evd.valid.v':'Not yet: demo with illustrative figures',
+  'evd.d':'Personas (d)','evd.d.v':'{n} archetypes · {p} OCM passages in {c} categories · {k} sources active',
+  'evd.h':'Content (h)','evd.z':'Situation (z)','evd.a':'Policy options (a)','evd.y':'Answer space (Y)',
+  'evd.model':'Decision model (p_K)','evd.model.v':'No model runs in this demo',
+  'evd.unc':'Uncertainty','evd.unc.v':'Ranges across repeated runs, not single-run point estimates',
+  'evd.gap':'Not checked','evd.gap.v':'Peer influence and emergent events (✱)'
 },
 id:{
   locale:'id-ID',
@@ -902,19 +978,19 @@ id:{
 
   'hero.badge1':'Prototipe Demo', 'hero.badge2':'v0.4 — Agustus 2026',
   'hero.title':'Uji kebijakan sebelum warga yang mengujinya.',
-  'hero.lede':'Simulacra membangun kembar digital dari sebuah wilayah: ribuan agent AI dengan persona, memori, dan logika perilaku sendiri — disusun dari data etnografi, Satu Data Indonesia, dan Satu Peta. Kebijakan dijalankan di dalam dunia itu lebih dulu, sehingga pemerintah daerah bisa melihat reaksi masyarakat, titik gesekan, dan jalur eskalasi sebelum aturan benar-benar diterbitkan.',
+  'hero.lede':'Simulacra membangun kembar digital dari sebuah wilayah: ribuan agent AI dengan persona, memori, dan logika perilaku sendiri — disusun dari data etnografi yang dikode dengan Outline of Cultural Materials, Satu Data Indonesia, dan Satu Peta. Kebijakan dijalankan di dalam dunia itu lebih dulu, sehingga pemerintah daerah bisa melihat reaksi masyarakat, titik gesekan, dan jalur eskalasi sebelum aturan benar-benar diterbitkan.',
   'hero.cta1':'MULAI SIMULASI BARU →', 'hero.cta2':'Lihat Contoh Skenario',
-  pipe:['01 · Seed Material','02 · Knowledge Graph','03 · Generasi Persona','04 · Simulasi Sosial','05 · Laporan Prediksi'],
+  pipe:['01 · Sumber Lokal','02 · Koding OCM','03 · State Simulasi','04 · Model Keputusan','05 · Laporan Kebijakan'],
   'scn.title':'CONTOH SKENARIO SIAP COBA', 'scn.badge':'Klik untuk memuat',
   'scn.lede':'Lima kasus kebijakan daerah yang sudah disiapkan lengkap dengan seed material, persona, dan parameter simulasinya. Pilih satu untuk langsung menjalankan alur penuh.',
   'scn.risk':'Risiko', 'scn.cta':'Klik untuk memuat',
   'how.title':'Cara Kerja',
   how:[
-    ['Seed material','dokumen kebijakan, notulen musrenbang, catatan lapangan, dan data spasial dimuat sebagai bahan mentah.'],
-    ['Knowledge graph','entitas (aktor, wilayah, isu, aturan) dan relasinya diekstraksi agar agent tidak berhalusinasi di luar konteks nyata.'],
-    ['Generasi persona','populasi agent dibentuk mengikuti demografi, struktur kuasa, dan konteks budaya dari graph.'],
-    ['Simulasi sosial','agent berinteraksi di dua platform — mikroblog dan forum berutas — membentuk opini, koalisi, dan perlawanan.'],
-    ['Laporan prediksi','pola emergen dirangkum menjadi prediksi, risiko, dan rekomendasi mitigasi.']
+    ['Sumber lokal','dokumen kebijakan, notulen musrenbang, wawancara, statistik, dan data spasial dihimpun sebagai bahan mentah.'],
+    ['Koding OCM','setiap kutipan ditandai dengan kode Outline of Cultural Materials (Yale HRAF), sehingga pengetahuan lokal bisa dibandingkan, ditelusuri, dan diaudit.'],
+    ['State simulasi','setiap keputusan agent dibangun sebagai s = (d, h, z, a): persona, kebijakan sebagaimana diterima warga, situasi, dan opsi kebijakan yang diuji.'],
+    ['Model keputusan','agent memilih dari daftar respons lokal yang tetap dan berlabel, sambil berinteraksi di mikroblog dan forum berutas.'],
+    ['Laporan kebijakan','respons dibandingkan antar-opsi kebijakan, lengkap dengan rentang dan catatan bukti tentang apa yang sudah dan belum divalidasi.']
   ],
   'srcbox.title':'Sumber Data',
   'srcbox.lede':'Persona dan lingkungan tidak dikarang. Setiap agent diturunkan dari kombinasi:',
@@ -927,7 +1003,7 @@ id:{
   'srcbox.note':'Catatan: halaman ini adalah demo antarmuka. Tidak ada model AI yang benar-benar dijalankan; seluruh angka, persona, dan percakapan bersifat ilustratif.',
 
   'step.1':'TAHAP 01','step.2':'TAHAP 02','step.3':'TAHAP 03','step.4':'TAHAP 04','step.5':'TAHAP 05',
-  'h.input':'Seed Material',
+  'h.input':'Sumber Lokal',
   'sub.input':'Pilih sumber yang membangun dunia simulasi. Semakin kaya bahannya, semakin berpijak perilaku agent-nya.',
   'btn.changeScn':'Ganti Skenario',
   'srcsel.title':'Pilih Sumber Data',
@@ -935,7 +1011,7 @@ id:{
   'ctx.title':'Konteks Kebijakan','ctx.label':'Ringkasan kebijakan & situasi lapangan',
   'ctx.ph':'Contoh: Pemkab berencana menyesuaikan tarif PBB-P2 mulai tahun anggaran berikutnya…',
   'term.title':'Log Ekstraksi','term.aria':'Log proses ekstraksi','term.idle':'$ simulacra ready — menunggu seed material…',
-  'btn.build':'BANGUN KNOWLEDGE GRAPH →','build.hint':'Pilih minimal satu sumber data untuk melanjutkan.',
+  'btn.build':'KODING OCM & BANGUN STATE →','build.hint':'Pilih minimal satu sumber data untuk melanjutkan.',
   sources:[
     ['Data Etnografi','Wawancara mendalam, catatan lapangan, sejarah tutur, dan pemetaan relasi sosial di tingkat desa.'],
     ['Satu Data Indonesia','Statistik BPS, data Dukcapil, dan data sektoral kabupaten yang telah terstandardisasi.'],
@@ -943,9 +1019,9 @@ id:{
     ['Data Sekunder','Pemberitaan, percakapan publik, dokumen musrenbang, dan arsip kebijakan sebelumnya.']
   ],
 
-  'h.persona':'Persona & Lingkungan',
-  'sub.persona':'Populasi agent dibentuk dari knowledge graph. Klik kartu untuk melihat latar, kutipan khas, dan posisi jaringannya.',
-  'pop.title':'Populasi Agent','kg.title':'Knowledge Graph','kg.aria':'Diagram relasi antar entitas kebijakan',
+  'h.persona':'State Simulasi',
+  'sub.persona':'Komponen persona d dari setiap state keputusan, dibentuk dari sumber berkode OCM dan knowledge graph. Klik kartu untuk melihat latar, posisi jaringan, dan sumber yang mendasarinya.',
+  'pop.title':'Persona (d)','kg.title':'Knowledge Graph','kg.aria':'Diagram relasi antar entitas kebijakan',
   'persona.count':'{n} arketipe',
   legend:['Pemerintah','Isu Kebijakan','Kelompok Warga','Objek / Aturan'],
   'graph.idle':'Arahkan kursor ke sebuah simpul untuk menyorot relasinya.',
@@ -955,10 +1031,10 @@ id:{
   'btn.toSetup':'LANJUT KE PENGATURAN SKENARIO →','btn.back':'← Kembali',
 
   'h.setup':'Pengaturan Skenario',
-  'sub.setup':'Tentukan pertanyaan kebijakan yang ingin dijawab dan atur parameter dunia simulasi.',
+  'sub.setup':'Tentukan pertanyaan kebijakan, lalu pilih bagian state keputusan yang ingin diuji: opsi kebijakan (a), konten yang diterima warga (h), dan situasi (z).',
   'q.title':'Pertanyaan Kebijakan','q.label':'Apa yang ingin Anda ketahui?',
   'plat.title':'Platform Simulasi',
-  'plat.lede':'Simulasi berjalan paralel di dua jenis ruang percakapan, sesuai arsitektur dual-platform pada MiroFish.',
+  'plat.lede':'Simulasi berjalan paralel di dua jenis ruang percakapan.',
   'plat.w':'Mikroblog cepat — reaksi spontan, tagar, penyebaran luas',
   'plat.b':'Forum berutas — diskusi panjang, konsolidasi argumen',
   'param.title':'Parameter Simulasi',
@@ -970,7 +1046,7 @@ id:{
   intensity:['Rendah','Sedang','Tinggi','Ekstrem'],
   'unit.days':'hari','unit.agents':'agent',
   'cfg.title':'Ringkasan Konfigurasi',
-  cfg:['Skenario','Wilayah','Populasi agent','Rentang waktu','Intensitas','Jangkauan media','Bobot faktor','Platform','Sumber data'],
+  cfg:['Skenario','Wilayah','Populasi agent','Rentang waktu','Intensitas','Jangkauan media','Konten (h)','Situasi (z)','Opsi kebijakan (a)','Platform','Sumber data'],
   'cfg.none':'belum dipilih','cfg.weight':'Ekonomi {a}% / Sosial-budaya {b}%','cfg.srcActive':'{n} sumber aktif',
   'cfg.est':'Estimasi beban komputasi: {n} interaksi agent. Pada demo ini simulasi dipercepat menjadi kurang dari satu menit.',
   'btn.run':'▶ JALANKAN SIMULASI',
@@ -981,7 +1057,7 @@ id:{
   'progress.aria':'Kemajuan simulasi','progress.label':'HARI {d} / {t}  ·  {p}%',
   'm.agents':'Agent Aktif','m.inter':'Total Interaksi','m.sent':'Indeks Sentimen',
   'speed.aria':'Kecepatan simulasi','tabs.aria':'Platform',
-  'ev.title':'Peristiwa Emergen','ev.waiting':'MENUNGGU',
+  'ev.title':'Peristiwa Emergen ✱','ev.waiting':'MENUNGGU',
   'ev.waitingText':'Peristiwa akan muncul ketika ambang batas perilaku kolektif terlampaui.',
   'ev.day':'HARI {d}','feed.empty':'Menunggu simulasi dimulai…',
   'post.day':'hari ke-{d}',
@@ -1009,7 +1085,41 @@ id:{
   't.question':'Pertanyaan diperbarui.',
   't.download':'Laporan berhasil disiapkan — ini demo, berkas tidak benar-benar dibuat.',
   't.lang':'Bahasa diubah ke Bahasa Indonesia.',
-  'btn.building':'MEMBANGUN…'
+  'btn.building':'MEMBANGUN…',
+
+  'ocm.log':'Koding OCM: {p} kutipan ditandai dalam {c} kategori',
+  'ocm.review':'{n} kutipan tanpa kode OCM yang meyakinkan — masuk antrean tinjauan manual',
+  'modal.src':'Bersumber dari (persona d)',
+  'modal.meters':'Skor diperkirakan dari sumber berkode di atas dan menggambarkan arketipe, bukan individu nyata.',
+  'st.title':'State Keputusan',
+  'st.lede':'Setiap keputusan agent adalah state s = (d, h, z, a) yang dijawab dari daftar respons lokal y yang tetap. Pilih apa yang ingin divariasikan.',
+  'st.a':'Opsi kebijakan yang dibandingkan (a)',
+  'st.a.h':'Opsi A adalah kebijakan sesuai draf dan selalu disertakan sebagai pembanding.',
+  'st.h':'Konten yang diterima warga (h)',
+  'st.h.h':'Bagaimana kebijakan sampai ke warga: siapa yang menyampaikan, dan lewat kanal apa.',
+  chan:['Pengumuman resmi saja','Lewat kepala desa / lurah','Musyawarah warga lebih dulu'],
+  'st.z':'Situasi (z)',
+  'st.z.h':'Momen ketika kebijakan tiba. Tekanan ekonomi: paceklik atau kenaikan harga. Periode sensitif: hari besar keagamaan atau musim pemilu.',
+  situ:['Periode normal','Tekanan ekonomi','Periode sensitif'],
+  'st.d':'Persona (d)',
+  'st.d.v':'{n} arketipe dari Tahap 02, bersumber dari {p} kutipan berkode OCM.',
+  'st.d.none':'Muat skenario dan bangun state terlebih dahulu.',
+  'cfg.arms':'{n} dibandingkan',
+  'ev.flag':'✱ Pengaruh antarwarga adalah bagian paling belum tervalidasi dari simulasi berbasis agent. Perlakukan peristiwa ini sebagai hipotesis yang perlu dicek, bukan ramalan.',
+  'rep.arms':'Respons per Opsi Kebijakan',
+  'rep.arms.lede':'Keputusan yang ditanyakan ke setiap agent: “{q}” Tiap sel adalah perkiraan porsi agent yang memilih respons tersebut.',
+  'rep.arms.opt':'Opsi kebijakan',
+  'rep.arms.base':'pembanding',
+  'rep.arms.adj':'Disesuaikan untuk konten “{h}” dan situasi “{z}”.',
+  'rep.arms.note':'Rentang menunjukkan persentil ke-10 hingga ke-90 dari simulasi berulang. Ilustratif pada demo ini.',
+  'rep.range':'rentang 80%: {a}–{b}%',
+  'rep.evidence':'Catatan Bukti',
+  'evd.valid':'Divalidasi terhadap','evd.valid.v':'Belum: demo dengan angka ilustratif',
+  'evd.d':'Persona (d)','evd.d.v':'{n} arketipe · {p} kutipan OCM dalam {c} kategori · {k} sumber aktif',
+  'evd.h':'Konten (h)','evd.z':'Situasi (z)','evd.a':'Opsi kebijakan (a)','evd.y':'Ruang jawaban (Y)',
+  'evd.model':'Model keputusan (p_K)','evd.model.v':'Tidak ada model yang dijalankan pada demo ini',
+  'evd.unc':'Ketidakpastian','evd.unc.v':'Rentang dari simulasi berulang, bukan estimasi titik dari satu kali jalan',
+  'evd.gap':'Belum dicek','evd.gap.v':'Pengaruh antarwarga dan peristiwa emergen (✱)'
 }
 };
 
@@ -1022,8 +1132,8 @@ function t(key, vars){
 function tl(key){ return UI[LANG][key]; }   /* list/array lookups */
 
 var SECTION_LABELS = {
-  en:['Dashboard','Seed Material','Personas & Environment','Scenario Setup','Running Simulation','Report & Insights'],
-  id:['Dashboard','Seed Material','Persona & Lingkungan','Pengaturan Skenario','Menjalankan Simulasi','Laporan & Insights']
+  en:['Dashboard','Local Sources','Simulation State','Scenario Setup','Running Simulation','Report & Insights'],
+  id:['Dashboard','Sumber Lokal','State Simulasi','Pengaturan Skenario','Menjalankan Simulasi','Laporan & Insights']
 };
 
 /* -------------------------------------------------------------------------
@@ -1071,6 +1181,7 @@ var SCENARIOS = [
   ],
   personas:[
     {n:'Sarmi Widodo', h:'@sarmi_kayen', age:54, trust:22, infl:35, econ:88,
+     src:['BPS','OCM 240','OCM 420','OCM 620','ETNO'],
      role:B('Tenant rice farmer','Petani penggarap'), place:B('Kayen Village','Ds. Kayen'),
      tags:B(['0.3 ha of paddy','No land certificate','Neighbourhood elder'],['Sawah 0,3 ha','Tidak punya sertifikat','Tokoh RT']),
      bio:B('Works inherited paddy land together with two siblings, never formally subdivided. Nets 2–3 million rupiah per planting season after fertiliser and labour. Has never missed a tax payment in 30 years and treats that as a point of pride.',
@@ -1080,6 +1191,7 @@ var SCENARIOS = [
      net:B('Connected to the village farmers group, the neighbourhood savings circle, and the Thursday-night prayer gathering.',
            'Terhubung ke kelompok tani desa, jaringan arisan RT, dan pengajian rutin Kamis malam.')},
     {n:'KH. Muzammil', h:'@kh.muzammil', age:61, trust:40, infl:92, econ:45,
+     src:['OCM 780','OCM 660','OCM 870','ETNO'],
      role:B('Islamic boarding school leader','Pengasuh pesantren'), place:B('Trangkil Village','Ds. Trangkil'),
      tags:B(['Religious authority','Wide reach','Inclined to restraint'],['Tokoh agama','Jangkauan luas','Cenderung menahan']),
      bio:B('Leads a boarding school of 640 students with an alumni network reaching nearly every district. Historically favours deliberation, yet holds the largest mobilisation capacity of any archetype here.',
@@ -1089,6 +1201,7 @@ var SCENARIOS = [
      net:B('Principal bridge between citizen groups and the alliance. Shelters farmers and traders alike.',
            'Simpul utama antara kelompok warga dan aliansi. Menaungi petani dan pedagang sekaligus.')},
     {n:'Sugeng Riyanto', h:'@kadeswedarijaksa', age:47, trust:68, infl:74, econ:50,
+     src:['OCM 650','OCM 620','OCM 660','NEWS'],
      role:B('Village head','Kepala desa'), place:B('Wedarijaksa Village','Ds. Wedarijaksa'),
      tags:B(['Local official','Caught in between','Needs legitimacy'],['Aparat','Terjepit','Butuh legitimasi']),
      bio:B('Asked by the regency to explain a policy whose text he received only days earlier. Caught between structural loyalty and the legitimacy before his own residents that keeps him in office.',
@@ -1098,6 +1211,7 @@ var SCENARIOS = [
      net:B('The structural link between regency and residents. The most fragile point in the delivery chain.',
            'Penghubung struktural Pemkab–warga. Titik paling rapuh dalam rantai penyampaian kebijakan.')},
     {n:'Ngatinah', h:'@ngatinah_sayur', age:43, trust:30, infl:40, econ:90,
+     src:['BPS','OCM 440','OCM 200','OCM 570','ETNO'],
      role:B('Homemaker / vegetable seller','Ibu rumah tangga / pedagang sayur'), place:B('Margorejo Village','Ds. Margorejo'),
      tags:B(['Daily cash economy','Fast spreader','Savings-circle network'],['Ekonomi harian','Penyebar cepat','Jaringan arisan']),
      bio:B('Sells vegetables at the village market each morning and supports three children in school. Whatever she hears travels very fast through the savings circles and messaging groups of an entire district.',
@@ -1107,6 +1221,7 @@ var SCENARIOS = [
      net:B('The fastest transmission point at the grassroots, despite low formal influence.',
            'Simpul penyebaran tercepat di lapisan akar rumput, meski pengaruh formalnya rendah.')},
     {n:'Bagas Prayoga', h:'@bagasprayoga_', age:24, trust:25, infl:66, econ:62,
+     src:['BPS','OCM 200','OCM 660','NEWS'],
      role:B('Youth organisation member','Pemuda Karang Taruna'), place:B('Juwana Village','Ds. Juwana'),
      tags:B(['Digitally fluent','Organiser','Demands numbers'],['Melek digital','Penggerak','Menuntut data']),
      bio:B('A vocational school graduate doing odd jobs while running the district youth organisation. Organises through online channels and asks for figures rather than rhetoric.',
@@ -1116,6 +1231,7 @@ var SCENARIOS = [
      net:B('Mobilises the youth layer across villages; accelerates the shift from complaint to formal demand.',
            'Menggerakkan lapisan pemuda lintas desa; mempercepat konsolidasi dari keluhan menjadi tuntutan.')},
     {n:'H. Karnadi', h:'@karnadi.kelontong', age:58, trust:35, infl:58, econ:80,
+     src:['BPS','OCM 440','OCM 420','SATU PETA'],
      role:B('Grocery shop owner','Pemilik toko kelontong'), place:B('Pati Town','Kec. Pati Kota'),
      tags:B(['Small business','Asset on main road','Counts margins'],['UMKM','Aset di jalan utama','Hitung margin']),
      bio:B('His shop sits on the main road, so its assessed land value rises the most. Also carries market levies, electricity, and rent on an additional stall.',
@@ -1125,6 +1241,7 @@ var SCENARIOS = [
      net:B('Anchor of the trader bloc; his stance sets the direction of the regency business association.',
            'Simpul kelompok pedagang; sikapnya menentukan arah paguyuban UMKM kabupaten.')},
     {n:'Lintang Prameswari', h:'@lintang.agraria', age:31, trust:15, infl:84, econ:55,
+     src:['OCM 660','OCM 670','NEWS'],
      role:B('Land rights NGO organiser','Aktivis LSM agraria'), place:B('Pati Town','Pati Kota'),
      tags:B(['Data-driven','Articulate','Media reach'],['Berbasis data','Artikulatif','Jangkauan media']),
      bio:B('Has accompanied land disputes since 2019 and reads policy documents closely. Converts scattered grievance into arguments that can be carried to the council and the press.',
@@ -1134,6 +1251,7 @@ var SCENARIOS = [
      net:B('Bridge between residents, media, and the regional council. The main accelerator of alliance formation.',
            'Jembatan antara warga, media, dan DPRD. Akselerator utama pembentukan aliansi.')},
     {n:'Mbah Darmo', h:'@mbahdarmo.sukolilo', age:72, trust:45, infl:70, econ:48,
+     src:['OCM 420','OCM 600','OCM 620','ETNO'],
      role:B('Village elder','Sesepuh desa'), place:B('Sukolilo Village','Ds. Sukolilo'),
      tags:B(['Moral authority','Inheritance values','Conservative'],['Otoritas moral','Nilai warisan','Konservatif']),
      bio:B('Deferred to on questions of land and village boundaries. Rejects valuing inherited land by market logic — an objection that is cultural rather than economic.',
@@ -1142,6 +1260,7 @@ var SCENARIOS = [
      net:B('Lends cultural legitimacy to refusal; makes the issue resistant to purely financial settlement.',
            'Memberi legitimasi kultural pada penolakan; membuat isu sulit diselesaikan dengan kompensasi uang.')},
     {n:'Rina Kusuma', h:'@rina.kec', age:36, trust:78, infl:44, econ:40,
+     src:['OCM 650','BPS','ETNO'],
      role:B('District civil servant','ASN kecamatan'), place:B('Kayen District','Kec. Kayen'),
      tags:B(['Civil servant','Follows procedure','Quiet sympathy'],['Aparat','Patuh prosedur','Simpati diam']),
      bio:B('Sits on the front line of public service but received the rate schedule late and without briefing material. Sympathetic to residents yet bound by her official position.',
@@ -1150,6 +1269,7 @@ var SCENARIOS = [
      net:B('Early indicator of internal fracture in the bureaucracy; her stance shapes the quality of public briefing.',
            'Indikator awal keretakan internal birokrasi; sikapnya memengaruhi kualitas sosialisasi.')},
     {n:'Tarno', h:'@tarno_gabus', age:39, trust:20, infl:22, econ:95,
+     src:['BPS','OCM 240','OCM 460','ETNO'],
      role:B('Migrant farm labourer','Buruh tani migran'), place:B('Gabus Village','Ds. Gabus'),
      tags:B(['Landless','Daily wage','Indirectly hit'],['Tidak punya lahan','Upah harian','Terdampak tak langsung']),
      bio:B('Works other people’s land by the day, on a wage that shrinks the moment the owner’s production costs rise. Hit hardest despite not being a taxpayer at all.',
@@ -1264,12 +1384,20 @@ var SCENARIOS = [
   events:[
     {d:3, t:B('The hashtag #PatiMenolak appears on WargaNet; 128 agents adopt it within 48 simulated hours.','Tagar #PatiMenolak muncul di WargaNet; 128 agent mengadopsinya dalam 48 jam simulasi.')},
     {d:6, t:B('Complaints concentrate in Kayen, Sukolilo, and Juwana — the three districts with the highest share of paddy land.','Klaster keluhan terkonsentrasi di Kec. Kayen, Sukolilo, dan Juwana — tiga kecamatan dengan proporsi lahan sawah tertinggi.')},
-    {d:9, t:B('An opposition cluster of 340 agents forms across villages, with argument coherence of 0.71.','Terbentuk klaster oposisi berisi 340 agent lintas desa dengan koherensi argumen 0,71.')},
-    {d:13, t:B('Religious leaders join the refusal coalition. Message reach rises 3.2× within a single simulated day.','Tokoh agama bergabung ke koalisi penolak. Jangkauan pesan naik 3,2× dalam satu hari simulasi.')},
+    {d:9, t:B('An opposition cluster of roughly 300–380 agents forms across villages, its arguments converging fast.','Terbentuk klaster oposisi sekitar 300–380 agent lintas desa, dengan argumen yang cepat menyatu.')},
+    {d:13, t:B('Religious leaders join the refusal coalition. Message reach roughly triples within a few simulated days.','Tokoh agama bergabung ke koalisi penolak. Jangkauan pesan naik kira-kira tiga kali lipat dalam beberapa hari simulasi.')},
     {d:17, t:B('Village officials split: 11 agents fall silent, 6 openly side with residents.','Aparat desa terbelah: 11 agent memilih diam, 6 agent menyatakan berpihak pada warga secara terbuka.')},
     {d:21, t:B('Talk of public mass action is detected in 62% of active conversations.','Wacana aksi massa di ruang publik terdeteksi pada 62% percakapan aktif.')},
     {d:26, t:B('Narrative shift: from the size of the tax to the legitimacy and style of leadership.','Pergeseran narasi: dari isu besaran pajak menjadi isu legitimasi dan gaya kepemimpinan.')},
     {d:30, t:B('Sentiment stabilises deep in the red. Probability of regency-wide mass action: 74%.','Sentimen stabil di zona merah. Probabilitas aksi massa berskala kabupaten: 74%.')}
+  ],
+  ocm:{passages:3412, cats:46, review:58, top:[[650,612],[240,548],[420,433],[620,391],[780,276]]},
+  decision:{q:B('How do you respond to the new tax bill?','Bagaimana Anda menyikapi tagihan pajak yang baru?'),
+            y:B(['Pay on time','Pay late','Seek relief / object','Join a protest'],['Bayar tepat waktu','Bayar terlambat','Minta keringanan / keberatan','Ikut aksi protes'])},
+  arms:[
+    {k:B('As drafted: up to 250% at once','Sesuai draf: naik hingga 250% sekaligus'), v:[[22,16,29],[27,20,34],[19,13,25],[32,24,40]]},
+    {k:B('Phased over 3 years, max 40% a year','Bertahap 3 tahun, maks. 40% per tahun'), v:[[41,33,49],[26,19,33],[21,15,28],[12,7,18]]},
+    {k:B('Phased + relief for farms under 0.5 ha','Bertahap + keringanan lahan di bawah 0,5 ha'), v:[[50,42,58],[21,15,27],[19,13,25],[10,6,15]]}
   ],
   report:{
     stats:[{k:B('Opposed','Menolak'), v:'68%', c:'red'}, {k:B('Neutral','Netral'), v:'21%', c:'yellow'},
@@ -1312,15 +1440,15 @@ var SCENARIOS = [
     ],
     recs:[
       {i:'HIGH', e:'EASY', h:B('Phase the increase over 3 years with an annual cap','Terapkan kenaikan bertahap 3 tahun dengan batas atas per tahun'),
-       p:B('A counterfactual capped at 40% per year lowers mass-action probability from 74% to 23% on re-simulation.','Skenario tandingan dengan kenaikan maksimum 40% per tahun menurunkan probabilitas aksi massa dari 74% menjadi 23% pada simulasi ulang.')},
+       p:B('A counterfactual capped at 40% per year lowers mass-action probability from around 74% to roughly 20–30% on re-simulation (see option B above).','Skenario tandingan dengan kenaikan maksimum 40% per tahun menurunkan probabilitas aksi massa dari sekitar 74% menjadi kira-kira 20–30% pada simulasi ulang (lihat opsi B di atas).')},
       {i:'HIGH', e:'EASY', h:B('Separate the land value revision from the rate increase','Pisahkan penyesuaian NJOP dari penyesuaian tarif'),
        p:B('Running both in the same year multiplies the effect residents feel. Separate them by at least one fiscal year.','Menjalankan keduanya di tahun yang sama melipatgandakan efek yang dirasakan warga. Pisahkan minimal satu tahun anggaran.')},
       {i:'HIGH', e:'MED', h:B('Grant relief for small productive farmland','Beri keringanan untuk lahan pertanian produktif skala kecil'),
        p:B('Farmers below 0.5 ha account for 86% of negative sentiment but under 9% of revenue. Relief here is fiscally cheap and expensive to skip.','Petani dengan lahan di bawah 0,5 ha menyumbang 86% sentimen negatif namun kontribusinya terhadap PAD di bawah 9%. Keringanan di sini murah secara fiskal, mahal bila diabaikan.')},
       {i:'HIGH', e:'MED', h:B('Brief through village deliberation and religious leaders before enactment','Sosialisasi lewat musyawarah desa dan tokoh agama sebelum penetapan'),
-       p:B('The boarding school network is the widest-reaching node. Involving it early slows escalation by 41% in the counterfactual run.','Jaringan pesantren adalah simpul dengan jangkauan terbesar. Melibatkannya sejak awal menurunkan laju eskalasi 41% pada simulasi tandingan.')},
+       p:B('The boarding school network is the widest-reaching node. Involving it early clearly slows escalation in the counterfactual run.','Jaringan pesantren adalah simpul dengan jangkauan terbesar. Melibatkannya sejak awal jelas memperlambat eskalasi pada simulasi tandingan.')},
       {i:'MED', e:'EASY', h:B('Publish how revenue is allocated per village','Publikasikan peruntukan penerimaan per desa'),
-       p:B('The road-repair argument only works if it can be verified. Detailed publication converts 18% of neutral agents to supportive.','Argumen perbaikan jalan hanya efektif bila dapat diverifikasi. Publikasi rinci mengubah 18% agent netral menjadi mendukung.')}
+       p:B('The road-repair argument only works if it can be verified. Detailed publication moves roughly one in six neutral agents to supportive.','Argumen perbaikan jalan hanya efektif bila dapat diverifikasi. Publikasi rinci menggeser kira-kira satu dari enam agent netral menjadi mendukung.')}
     ]
   }
 }
@@ -1347,6 +1475,7 @@ var SCENARIOS = [
   ],
   personas:[
     {n:'Yulius Palinggi', h:'@yulius.kebun', age:49, trust:24, infl:42, econ:85,
+     src:['BPS','OCM 240','OCM 420','SATU PETA','ETNO'],
      role:B('Cocoa smallholder','Petani kakao penggarap'), place:B('Bone-Bone Village','Ds. Bone-Bone'),
      tags:B(['1.2 ha garden','Three generations','No formal title'],['Kebun 1,2 ha','Warisan 3 generasi','Tanpa alas hak']),
      bio:B('Works a cocoa garden his grandfather cleared in 1968. Never held a certificate because possession was recognised customarily, and only learned his land sat inside the forest zone when the markers went in.',
@@ -1354,6 +1483,7 @@ var SCENARIOS = [
      quote:B('My grandfather opened this forest. Now I am the one called an encroacher.','Kakek saya yang buka hutan ini. Sekarang saya yang disebut merambah hutan.'),
      net:B('Focal point of smallholder grievance; tied to both the farmers group and the customary council.','Simpul keluhan penggarap; terhubung ke kelompok tani dan lembaga adat sekaligus.')},
     {n:'Ne’ Sombolinggi', h:'@sombolinggi', age:66, trust:28, infl:88, econ:40,
+     src:['OCM 420','OCM 610','OCM 670','ETNO'],
      role:B('Customary leader','Pemangku adat'), place:B('Rampi Village','Ds. Rampi'),
      tags:B(['Customary authority','Keeper of boundaries','Rejects the new map'],['Otoritas adat','Penjaga batas','Menolak peta baru']),
      bio:B('Keeper of boundary knowledge passed down orally and marked by trees, rivers, and shrines. Rejects a map drawn without deliberation with the customary council.',
@@ -1361,6 +1491,7 @@ var SCENARIOS = [
      quote:B('Our boundaries existed before there were maps. It is the map that is wrong, not the land.','Batas kami sudah ada sebelum ada peta. Yang salah itu petanya, bukan tanahnya.'),
      net:B('Source of cultural legitimacy. Determines whether the conflict runs through courts or through customary process.','Pemberi legitimasi kultural. Sikapnya menentukan apakah konflik masuk jalur hukum atau jalur adat.')},
     {n:'Marthen Lolo', h:'@kadesbonebone', age:44, trust:62, infl:70, econ:48,
+     src:['OCM 650','OCM 620','SATU PETA'],
      role:B('Village head','Kepala desa'), place:B('Bone-Bone Village','Ds. Bone-Bone'),
      tags:B(['Local official','Mediator','Under-informed'],['Aparat','Mediator','Kurang informasi']),
      bio:B('The first place residents bring complaints, despite having no part in the boundary process. Tries to bridge the forest unit and residents without any formal authority to do so.',
@@ -1368,6 +1499,7 @@ var SCENARIOS = [
      quote:B('The markers went in without telling the village. Residents ask me, and I ask whom?','Patoknya dipasang tanpa memberi tahu desa. Warga bertanya ke saya, saya tanya ke siapa?'),
      net:B('A structural link left without footing because he was excluded from the start.','Penghubung struktural yang kehilangan pijakan karena tidak dilibatkan sejak awal.')},
     {n:'Fitriani Dewi', h:'@fitri.pendamping', age:33, trust:58, infl:64, econ:45,
+     src:['OCM 650','OCM 310','NEWS'],
      role:B('Social forestry facilitator','Pendamping perhutanan sosial'), place:B('Masamba','Masamba'),
      tags:B(['Technical','Process-bound','Bridge'],['Teknis','Berbasis prosedur','Jembatan']),
      bio:B('Guides permit applications in five villages. Understands the scheme could resolve most cases, but its paperwork takes far longer than residents already in panic can wait.',
@@ -1375,6 +1507,7 @@ var SCENARIOS = [
      quote:B('The solution does exist. The problem is the permit takes a year and the markers went in last week.','Solusinya sebenarnya ada. Masalahnya, izin butuh setahun sementara patoknya dipasang minggu lalu.'),
      net:B('The only node both sides trust; her capacity determines whether a peaceful route holds.','Satu-satunya simpul yang dipercaya kedua pihak; kapasitasnya menjadi penentu jalur damai.')},
     {n:'Andi Rusmin', h:'@andirusmin_', age:26, trust:20, infl:60, econ:58,
+     src:['OCM 610','OCM 660','OCM 200','ETNO'],
      role:B('Customary youth organiser','Pemuda adat'), place:B('Rampi Village','Ds. Rampi'),
      tags:B(['Documentation','Digitally fluent','Fast-moving'],['Dokumentasi','Melek digital','Cepat bergerak']),
      bio:B('Films the boundary marking on his phone and posts it. Becomes the link between the customary community and advocacy networks outside the region.',
@@ -1382,6 +1515,7 @@ var SCENARIOS = [
      quote:B('We record everything. Not to pick a fight — so no version goes missing.','Kami rekam semuanya. Bukan untuk ribut, supaya tidak ada versi yang hilang.'),
      net:B('Accelerates outside attention; turns a local issue into a provincial one.','Akselerator perhatian luar daerah; mempercepat isu lokal menjadi isu provinsi.')},
     {n:'Hasan Tahir', h:'@hasan.kph', age:41, trust:74, infl:50, econ:38,
+     src:['OCM 650','OCM 310','SATU PETA'],
      role:B('Forest unit officer','Staf KPH'), place:B('Masamba','Masamba'),
      tags:B(['Technical staff','Bound by decree','Double burden'],['Aparat teknis','Terikat SK','Beban ganda']),
      bio:B('Executes the boundary decree with no authority to alter it. Faces residents directly in the field as the face of a policy he did not write.',
@@ -1467,6 +1601,14 @@ var SCENARIOS = [
     {d:52, t:B('Labour migration out of the region detected in 9% of smallholder agents; the conflict starts to have demographic effects.','Terdeteksi migrasi kerja keluar daerah pada 9% agent penggarap; konflik mulai berdampak demografis.')},
     {d:60, t:B('Sentiment splits: the participatory-mapping cluster improves, the no-dialogue cluster deteriorates sharply.','Sentimen terbelah: klaster pemetaan partisipatif membaik, klaster tanpa dialog memburuk tajam.')}
   ],
+  ocm:{passages:2268, cats:39, review:71, top:[[420,486],[310,402],[610,317],[670,244],[240,231]]},
+  decision:{q:B('How do you respond to the new forest boundary?','Bagaimana Anda menyikapi batas kawasan hutan yang baru?'),
+            y:B(['Accept & apply for social forestry','Keep farming quietly','Formal objection / legal claim','Collective resistance'],['Terima & ajukan perhutanan sosial','Tetap menggarap diam-diam','Keberatan resmi / gugatan','Perlawanan kolektif'])},
+  arms:[
+    {k:B('As drafted: clearance now, permits later','Sesuai draf: penertiban dulu, izin belakangan'), v:[[18,12,25],[30,22,38],[31,23,39],[21,14,28]]},
+    {k:B('Moratorium until participatory mapping','Moratorium sampai pemetaan partisipatif'), v:[[34,26,42],[29,21,37],[24,17,31],[13,8,19]]},
+    {k:B('Moratorium + interim cultivation permits','Moratorium + izin garap sementara'), v:[[46,38,54],[22,15,29],[21,15,28],[11,6,16]]}
+  ],
   report:{
     stats:[{k:B('Opposed','Menolak'), v:'59%', c:'red'}, {k:B('Neutral','Netral'), v:'28%', c:'yellow'},
            {k:B('Supportive','Mendukung'), v:'13%', c:'green'}, {k:B('Litigation Probability','Probabilitas Sengketa Hukum'), v:'61%', c:'red'}],
@@ -1506,7 +1648,7 @@ var SCENARIOS = [
     ],
     recs:[
       {i:'HIGH', e:'MED', h:B('Suspend clearance until participatory mapping is complete','Hentikan penertiban sampai pemetaan partisipatif selesai'),
-       p:B('A temporary moratorium in the counterfactual run lowers litigation probability from 61% to 29%.','Moratorium sementara pada simulasi tandingan menurunkan probabilitas sengketa hukum dari 61% menjadi 29%.')},
+       p:B('A temporary moratorium in the counterfactual run roughly halves litigation probability, from about 61% to 25–35%.','Moratorium sementara pada simulasi tandingan menurunkan probabilitas sengketa hukum kira-kira separuhnya, dari sekitar 61% menjadi 25–35%.')},
       {i:'HIGH', e:'MED', h:B('Issue interim cultivation permits while the process runs','Terbitkan izin sementara menggarap selama proses berjalan'),
        p:B('Closing the 8–14 month gap is the single intervention with the largest effect. It removes the migration trigger and cuts refusal by 22 points.','Menutup jeda 8–14 bulan adalah intervensi tunggal dengan efek terbesar. Menghilangkan pemicu migrasi dan menurunkan penolakan 22 poin.')},
       {i:'HIGH', e:'EASY', h:B('Reconcile the maps through participatory mapping','Satukan versi peta lewat pemetaan partisipatif'),
@@ -1538,6 +1680,7 @@ var SCENARIOS = [
   ],
   personas:[
     {n:'Yohanes Jelamu', h:'@kadeswaerana', age:45, trust:64, infl:76, econ:52,
+     src:['OCM 650','OCM 450','BPS'],
      role:B('Village head','Kepala desa'), place:B('Wae Rana Village','Ds. Wae Rana'),
      tags:B(['Implementer','Competing targets','Reporting burden'],['Pelaksana','Target ganda','Beban laporan']),
      bio:B('Manages the Village Fund with one operator and one treasurer. Faces residents demanding construction and a regency demanding reports on time.',
@@ -1545,6 +1688,7 @@ var SCENARIOS = [
      quote:B('Residents want roads, the rule wants food security, the regency wants reports. The staff is still two people.','Warga minta jalan, aturan minta ketahanan pangan, kabupaten minta laporan. Tenaganya tetap dua orang.'),
      net:B('The implementing node; the policy’s success rests almost entirely on this node’s capacity.','Simpul pelaksana; keberhasilan kebijakan hampir seluruhnya bergantung pada kapasitas simpul ini.')},
     {n:'Maria Sensiana', h:'@sensi.bendahara', age:34, trust:70, infl:38, econ:44,
+     src:['OCM 450','OCM 650','ETNO'],
      role:B('Village treasurer','Bendahara desa'), place:B('Golo Mori Village','Ds. Golo Mori'),
      tags:B(['Administrative','Technical load','Afraid of errors'],['Administratif','Beban teknis','Takut salah']),
      bio:B('Responsible for all village financial reporting without formal accounting training. A reporting format that changes yearly is her main source of anxiety.',
@@ -1552,6 +1696,7 @@ var SCENARIOS = [
      quote:B('It is not that we refuse to comply. The format changes every year and the training lasts one day.','Bukan tidak mau tertib. Formatnya ganti tiap tahun, pelatihannya satu hari.'),
      net:B('The most likely technical failure point; disbursement delays usually begin here.','Titik kegagalan teknis paling mungkin; keterlambatan penyaluran biasanya bermula di sini.')},
     {n:'Petrus Hambur', h:'@petrus.bpd', age:52, trust:48, infl:66, econ:50,
+     src:['OCM 650','OCM 660','ETNO'],
      role:B('Village council chair','Ketua BPD'), place:B('Wae Rana Village','Ds. Wae Rana'),
      tags:B(['Oversight','Demands transparency','Firm'],['Pengawas','Menuntut transparansi','Tegas']),
      bio:B('Exercises an oversight function with limited authority and no staff support. Pushes for a budget information board in every hamlet.',
@@ -1559,6 +1704,7 @@ var SCENARIOS = [
      quote:B('Oversight is not suspicion. If everything is posted, nobody needs to whisper.','Pengawasan itu bukan curiga. Kalau semua ditempel, tidak ada yang perlu berbisik.'),
      net:B('The counterweight at village level; its effectiveness depends on access to information.','Penyeimbang kekuasaan di tingkat desa; efektivitasnya bergantung pada akses informasi.')},
     {n:'Bernadeta Ndiwa', h:'@berna.pkk', age:41, trust:66, infl:58, econ:62,
+     src:['OCM 260','OCM 570','BPS','ETNO'],
      role:B('Women’s group leader','Ketua PKK'), place:B('Golo Mori Village','Ds. Golo Mori'),
      tags:B(['Organiser','Food security','Women’s network'],['Penggerak','Ketahanan pangan','Jaringan ibu']),
      bio:B('Runs the women farmers group and child nutrition programme. Welcomes the mandatory food security allocation but finds it usually stops at handing out seedlings.',
@@ -1566,6 +1712,7 @@ var SCENARIOS = [
      quote:B('Seedlings get handed out, and that is the end of it. What never gets budgeted is the follow-through.','Bibit dibagi, lalu selesai. Yang tidak pernah dianggarkan itu pendampingannya.'),
      net:B('Delivers social programmes on the ground; determines whether the new allocation produces real effect.','Simpul pelaksana program sosial; penentu apakah alokasi baru menghasilkan dampak nyata.')},
     {n:'Fransiskus Doni', h:'@doni.mudalabuan', age:23, trust:30, infl:54, econ:78,
+     src:['BPS','OCM 460','OCM 200'],
      role:B('Village youth','Pemuda desa'), place:B('Nggorang Village','Ds. Nggorang'),
      tags:B(['Job-seeking','Critical','Media literate'],['Mencari kerja','Kritis','Melek media']),
      bio:B('A high school graduate waiting for work in tourism. Follows village budget discussions and questions spending lines that repeat year after year.',
@@ -1573,6 +1720,7 @@ var SCENARIOS = [
      quote:B('Every year there is a concrete paving line. Same stretch of road, thinner concrete.','Tiap tahun ada pos rabat beton. Jalannya itu-itu juga, betonnya tambah tipis.'),
      net:B('Triggers transparency demands; connects village issues to wider attention.','Pemicu tuntutan transparansi; menghubungkan isu desa ke perhatian yang lebih luas.')},
     {n:'Yustina Ndarung', h:'@yustina.pasar', age:47, trust:44, infl:36, econ:88,
+     src:['OCM 440','OCM 240','BPS'],
      role:B('Market trader','Pedagang pasar'), place:B('Nggorang Village','Ds. Nggorang'),
      tags:B(['Cash transfer recipient','Daily economy','Practical'],['Penerima BLT','Ekonomi harian','Praktis']),
      bio:B('Supports her family selling garden produce at the weekly market. Receives the cash transfer and questions recipient criteria that seem inconsistent between hamlets.',
@@ -1651,8 +1799,16 @@ var SCENARIOS = [
     {d:12, t:B('Horizontal grievance between residents over recipient criteria detected in 31 hamlets.','Keluhan horizontal antar warga soal kriteria penerima bantuan terdeteksi di 31 dusun.')},
     {d:15, t:B('The budget information board proposal spreads and is adopted by 22 villages — the lowest-cost intervention with the highest acceptance.','Usulan papan informasi anggaran menyebar dan diadopsi 22 desa — intervensi berbiaya rendah dengan penerimaan tertinggi.')},
     {d:22, t:B('A disbursement bottleneck forms: 38 villages have their first-tranche report rejected.','Klaster keterlambatan penyaluran terbentuk: 38 desa mengalami penolakan laporan tahap pertama.')},
-    {d:28, t:B('Villages with regular facilitation show 2.4× higher positive sentiment toward the food security programme.','Desa dengan pendamping rutin menunjukkan sentimen positif 2,4× lebih tinggi terhadap program ketahanan pangan.')},
+    {d:28, t:B('Villages with regular facilitation show roughly twice the positive sentiment toward the food security programme.','Desa dengan pendamping rutin menunjukkan sentimen positif kira-kira dua kali lipat terhadap program ketahanan pangan.')},
     {d:45, t:B('Final sentiment splits along administrative capacity, not along the content of the policy.','Sentimen akhir terbelah menurut kapasitas administrasi, bukan menurut isi kebijakan.')}
+  ],
+  ocm:{passages:1540, cats:33, review:29, top:[[650,398],[450,352],[260,214],[620,171],[460,118]]},
+  decision:{q:B('How does your village respond to the new rules?','Bagaimana desa Anda menyikapi aturan yang baru?'),
+            y:B(['Comply on time','Comply late','Request facilitation / revision','Public complaint'],['Patuh tepat waktu','Patuh terlambat','Minta pendampingan / revisi','Protes terbuka'])},
+  arms:[
+    {k:B('As drafted: new rules and new report format','Sesuai draf: aturan dan format laporan baru'), v:[[38,30,46],[29,22,36],[21,15,28],[12,7,18]]},
+    {k:B('Reporting format frozen for 3 years','Format laporan dibekukan 3 tahun'), v:[[49,41,57],[23,17,30],[18,12,24],[10,6,15]]},
+    {k:B('Frozen format + facilitation for 38 villages','Format beku + pendampingan 38 desa'), v:[[58,50,66],[18,12,24],[16,11,22],[8,4,13]]}
   ],
   report:{
     stats:[{k:B('Opposed','Menolak'), v:'34%', c:'red'}, {k:B('Neutral','Netral'), v:'41%', c:'yellow'},
@@ -1692,13 +1848,13 @@ var SCENARIOS = [
     ],
     recs:[
       {i:'HIGH', e:'EASY', h:B('Freeze the reporting format for at least three years','Bekukan format pelaporan minimal tiga tahun'),
-       p:B('Format stability cuts report rejection from 23% to 7% in the counterfactual run. Costs nothing to implement.','Stabilitas format menurunkan tingkat penolakan laporan dari 23% menjadi 7% pada simulasi tandingan. Intervensi tanpa biaya tambahan.')},
+       p:B('Format stability cuts report rejection from about one in four to under one in ten in the counterfactual run. Costs nothing to implement.','Stabilitas format menurunkan penolakan laporan dari sekitar satu dari empat menjadi kurang dari satu dari sepuluh pada simulasi tandingan. Intervensi tanpa biaya tambahan.')},
       {i:'HIGH', e:'EASY', h:B('Require recipient lists and budgets to be posted in every hamlet','Wajibkan publikasi daftar penerima dan APBDes di tiap dusun'),
        p:B('Under one million rupiah per village, yet it removes most of the horizontal grievance between residents.','Biaya di bawah satu juta rupiah per desa, namun menghilangkan sebagian besar keluhan horizontal antar warga.')},
       {i:'HIGH', e:'MED', h:B('Redirect facilitation to the 38 low-capacity villages','Alihkan pendampingan ke 38 desa berkapasitas rendah'),
        p:B('Needs-based rather than evenly spread support closes the disbursement gap within a single budget cycle.','Pendampingan intensif berbasis kebutuhan, bukan pemerataan, menutup kesenjangan penyaluran dalam satu siklus anggaran.')},
       {i:'MED', e:'EASY', h:B('Budget for technical facilitation inside the food security allocation','Anggarkan pendampingan teknis dalam alokasi ketahanan pangan'),
-       p:B('Villages with regular facilitators show 2.4× higher positive sentiment and harvests that actually materialise.','Desa dengan pendamping rutin menunjukkan sentimen positif 2,4× lebih tinggi dan hasil panen yang benar-benar terealisasi.')}
+       p:B('Villages with regular facilitators show roughly twice the positive sentiment, and harvests that actually materialise.','Desa dengan pendamping rutin menunjukkan sentimen positif kira-kira dua kali lipat, dan hasil panen yang benar-benar terealisasi.')}
     ]
   }
 },
@@ -1724,6 +1880,7 @@ var SCENARIOS = [
   ],
   personas:[
     {n:'Sumiyati', h:'@sumiyati.sayur', age:51, trust:32, infl:48, econ:87,
+     src:['BPS','OCM 440','OCM 570','ETNO'],
      role:B('Market vegetable seller','Pedagang sayur pasar'), place:B('Pasar Tugu','Pasar Tugu'),
      tags:B(['Fixed stall','Daily turnover','Regular customers'],['Los tetap','Omzet harian','Pelanggan langganan']),
      bio:B('Has held the same stall for 19 years with regular customers from the surrounding housing. Pays the daily levy without fail, yet has never received an official receipt.',
@@ -1731,6 +1888,7 @@ var SCENARIOS = [
      quote:B('Nineteen years I have paid every single day. I have never once held a receipt.','Sembilan belas tahun saya bayar tiap hari. Kuitansinya belum pernah saya pegang.'),
      net:B('Anchor of the fixed-stall traders; her stance sets the direction of the market association.','Simpul pedagang los tetap; sikapnya menentukan arah paguyuban pasar.')},
     {n:'Deni Saputra', h:'@deni.pkl', age:29, trust:18, infl:52, econ:92,
+     src:['OCM 440','OCM 360','SATU PETA','ETNO'],
      role:B('Roadside street vendor','PKL badan jalan'), place:B('Bambu Kuning area','Kawasan Pasar Bambu Kuning'),
      tags:B(['Unregistered','Facing relocation','Mobile'],['Tidak terdaftar','Terancam relokasi','Mobil']),
      bio:B('Sells drinks and snacks from a cart on the roadside since losing his job. Unregistered, so he falls outside every scheme, including relocation compensation.',
@@ -1738,6 +1896,7 @@ var SCENARIOS = [
      quote:B('The registered ones get a managed stall. Where are the unregistered supposed to go?','Yang terdaftar dapat lapak binaan. Yang tidak terdaftar disuruh pindah ke mana?'),
      net:B('The most exposed group and the fastest to move; bound by no formal structure.','Kelompok paling rentan sekaligus paling mudah bergerak; tidak terikat struktur formal.')},
     {n:'Hj. Rosmawati', h:'@rosmawati.paguyuban', age:56, trust:38, infl:86, econ:70,
+     src:['OCM 440','OCM 660','OCM 570'],
      role:B('Traders association chair','Ketua paguyuban pedagang'), place:B('Pasar Tugu','Pasar Tugu'),
      tags:B(['Negotiator','Mass base','Experienced'],['Negosiator','Basis massa','Berpengalaman']),
      bio:B('Leads an association of 640 members and has negotiated three previous levy adjustments. Prefers talks first, but holds the capacity to shut the market.',
@@ -1745,6 +1904,7 @@ var SCENARIOS = [
      quote:B('We are not refusing an increase. We are refusing an increase with no improvement inside the market.','Kami tidak menolak naik. Kami menolak naik tanpa perbaikan apa pun di dalam pasar.'),
      net:B('The main negotiation node; engaging her early determines which route the resolution takes.','Simpul negosiasi utama; melibatkannya sejak awal menentukan jalur penyelesaian.')},
     {n:'Agus Firmansyah', h:'@agus.retribusi', age:38, trust:72, infl:34, econ:42,
+     src:['OCM 650','OCM 450','ETNO'],
      role:B('Levy collection officer','Petugas retribusi'), place:B('Market management unit','UPT Pasar'),
      tags:B(['Front line','Collection target','Caught in between'],['Garis depan','Target setoran','Terjepit']),
      bio:B('Collects levies face to face every day and is the face of the policy to traders. Carries a rising collection target with no additional staff.',
@@ -1752,6 +1912,7 @@ var SCENARIOS = [
      quote:B('The rate rises on paper. The one who still has to collect it in the market is me.','Tarif naik di kertas. Yang harus menagihnya di lapangan tetap saya sendiri.'),
      net:B('The daily friction point; incidents here occur far more often than at policy level.','Titik gesek harian; friksi di simpul ini terjadi lebih sering daripada di tingkat kebijakan.')},
     {n:'Wayan Sudira', h:'@wayan.warkop', age:44, trust:36, infl:56, econ:76,
+     src:['OCM 440','OCM 360','OCM 570'],
      role:B('Coffee stall owner','Pemilik warung kopi'), place:B('Bambu Kuning area','Kawasan Bambu Kuning'),
      tags:B(['Fixed premises','Hit by zoning','Vocal'],['UMKM menetap','Terdampak zonasi','Vokal']),
      bio:B('Runs a coffee stall that depends on the foot traffic the surrounding vendors generate. Relocating them means losing most of his customers even though his own premises are untouched.',
@@ -1759,6 +1920,7 @@ var SCENARIOS = [
      quote:B('Move the vendors and the crowd moves with them. My stall stays; my customers do not.','PKL dipindah, ramainya ikut pindah. Warung saya tetap di sini, pembelinya yang hilang.'),
      net:B('Demonstrates the indirect effect of zoning; widens the base of refusal to fixed businesses.','Menunjukkan dampak tak langsung zonasi; memperluas basis penolakan ke pelaku usaha menetap.')},
     {n:'Siti Aminah', h:'@aminah.gorengan', age:35, trust:28, infl:30, econ:94,
+     src:['BPS','OCM 440','ETNO'],
      role:B('Fritter seller','Pedagang gorengan'), place:B('Pasar Way Halim','Pasar Way Halim'),
      tags:B(['Daily capital','Head of household','Quietly enduring'],['Modal harian','Kepala keluarga','Diam-diam bertahan']),
      bio:B('Supports two children selling fritters on capital that turns over daily. A hundred thousand rupiah more per month equals three days of profit.',
@@ -1842,6 +2004,14 @@ var SCENARIOS = [
     {d:24, t:B('Coordinated rate defiance: 47% of trader agents agree to keep paying the old rate.','Pembangkangan tarif terkoordinasi: 47% agent pedagang sepakat membayar dengan tarif lama.')},
     {d:30, t:B('Projected levy revenue falls 12% below the level before the increase.','Proyeksi penerimaan retribusi justru turun 12% dibanding sebelum kenaikan.')}
   ],
+  ocm:{passages:1986, cats:35, review:44, top:[[440,529],[450,341],[360,288],[570,236],[650,205]]},
+  decision:{q:B('How do you respond to the new levy and zoning?','Bagaimana Anda menyikapi retribusi dan zonasi yang baru?'),
+            y:B(['Pay the new rate','Keep paying the old rate','Negotiate via the association','Protest / refuse to move'],['Bayar tarif baru','Tetap bayar tarif lama','Negosiasi lewat paguyuban','Protes / menolak pindah'])},
+  arms:[
+    {k:B('As drafted: levy and zoning together','Sesuai draf: retribusi dan zonasi bersamaan'), v:[[14,9,20],[34,26,42],[23,16,30],[29,21,37]]},
+    {k:B('Levy and zoning separated in time','Retribusi dan zonasi dipisah waktunya'), v:[[24,17,31],[30,22,38],[28,21,35],[18,12,25]]},
+    {k:B('Tiered levy tied to facility upgrades','Retribusi bertingkat + perbaikan fasilitas'), v:[[39,31,47],[22,15,29],[26,19,33],[13,8,19]]}
+  ],
   report:{
     stats:[{k:B('Opposed','Menolak'), v:'71%', c:'red'}, {k:B('Neutral','Netral'), v:'18%', c:'yellow'},
            {k:B('Supportive','Mendukung'), v:'11%', c:'green'}, {k:B('Projected Revenue','Proyeksi PAD'), v:'−12%', c:'red'}],
@@ -1880,7 +2050,7 @@ var SCENARIOS = [
     ],
     recs:[
       {i:'HIGH', e:'EASY', h:B('Separate the levy policy from the vendor zoning policy','Pisahkan kebijakan retribusi dari kebijakan zonasi PKL'),
-       p:B('Bundling them creates a coalition between groups that normally compete. Separating the timing cuts refusal by 24 points in the counterfactual run.','Menggabungkan keduanya menciptakan koalisi antara dua kelompok yang biasanya bersaing. Memisahkan waktu penerapan menurunkan penolakan 24 poin pada simulasi tandingan.')},
+       p:B('Bundling them creates a coalition between groups that normally compete. Separating the timing cuts refusal by roughly 20–30 points in the counterfactual run.','Menggabungkan keduanya menciptakan koalisi antara dua kelompok yang biasanya bersaing. Memisahkan waktu penerapan menurunkan penolakan sekitar 20–30 poin pada simulasi tandingan.')},
       {i:'HIGH', e:'MED', h:B('Tie the increase to a verifiable improvement package','Kaitkan kenaikan dengan paket perbaikan yang dapat diverifikasi'),
        p:B('68% of agents would pay more given real improvement. Announce the work list and its deadlines alongside the new rate.','68% agent bersedia membayar lebih bila ada perbaikan nyata. Umumkan daftar pekerjaan dan tenggatnya bersamaan dengan tarif barunya.')},
       {i:'HIGH', e:'MED', h:B('Apply a tiered increase by business size','Terapkan kenaikan bertingkat menurut skala usaha'),
@@ -1913,6 +2083,7 @@ var SCENARIOS = [
   ],
   personas:[
     {n:'Slamet Riyadi', h:'@slamet.kentang', age:52, trust:26, infl:50, econ:82,
+     src:['BPS','OCM 240','OCM 420','SATU PETA'],
      role:B('Highland vegetable farmer','Petani sayur lereng'), place:B('Sembungan Village','Ds. Sembungan'),
      tags:B(['Productive land','3 harvests a year','Opposed'],['Lahan produktif','Panen 3× setahun','Menolak']),
      bio:B('Grows potatoes and cabbage on slope land yielding three harvests a year. His plot falls on the road alignment and is worth far more than land price alone because of its productivity.',
@@ -1920,6 +2091,7 @@ var SCENARIOS = [
      quote:B('Compensation is calculated from land price. What I lose is income every year, not just the land.','Ganti rugi dihitung dari harga tanah. Yang hilang itu penghasilan tiap tahun, bukan tanahnya saja.'),
      net:B('The main node of refusal; his objection is economic and can be quantified.','Simpul penolakan utama; keberatannya bersifat ekonomis dan dapat dihitung.')},
     {n:'Warsiti', h:'@warsiti.dieng', age:58, trust:30, infl:42, econ:70,
+     src:['OCM 360','OCM 420','OCM 600','ETNO'],
      role:B('Resident facing relocation','Warga terdampak relokasi'), place:B('Kepakisan Village','Ds. Kepakisan'),
      tags:B(['Inundation zone','Ancestral home','Anxious'],['Zona genangan','Rumah turun-temurun','Cemas']),
      bio:B('Her house sits in the planned inundation zone. Her objection is not the compensation figure but the severing of a neighbourhood network and the family graves.',
@@ -1927,6 +2099,7 @@ var SCENARIOS = [
      quote:B('A house can be rebuilt. Forty years of neighbours cannot be relocated.','Rumah bisa dibangun lagi. Tetangga empat puluh tahun tidak bisa dipindah.'),
      net:B('Brings a non-economic dimension that no financial compensation resolves.','Membawa dimensi non-ekonomi yang tidak terselesaikan lewat kompensasi uang.')},
     {n:'Eko Purnomo', h:'@eko.homestay', age:36, trust:58, infl:62, econ:66,
+     src:['OCM 480','OCM 440','BPS'],
      role:B('Tourism business owner','Pelaku usaha wisata'), place:B('Dieng Kulon Village','Ds. Dieng Kulon'),
      tags:B(['Homestay','Stands to gain','Supportive'],['Homestay','Diuntungkan','Mendukung']),
      bio:B('Runs a homestay and visitor transport service. Congestion on the tourism route cuts arrivals, so the ring road affects his business directly.',
@@ -1934,6 +2107,7 @@ var SCENARIOS = [
      quote:B('Weekends mean three hours of traffic. Guests cancel — not because the place is bad.','Akhir pekan macet tiga jam. Tamu batal datang, bukan karena tempatnya jelek.'),
      net:B('A real base of support; makes the issue three-way rather than two-way.','Basis dukungan yang nyata; membuat isu tidak terbelah dua melainkan tiga.')},
     {n:'Suryani Astuti', h:'@suryani.lingkungan', age:34, trust:22, infl:78, econ:48,
+     src:['OCM 310','OCM 660','NEWS'],
      role:B('Environmental advocate','Aktivis lingkungan'), place:B('Wonosobo','Wonosobo'),
      tags:B(['Study-based','Critical','Media reach'],['Berbasis kajian','Kritis','Jangkauan media']),
      bio:B('Studies the project’s effect on the water catchment and slope farmland. Challenges assumptions in the feasibility study rather than opposing development in principle.',
@@ -1941,6 +2115,7 @@ var SCENARIOS = [
      quote:B('We are not anti-dam. We are questioning the sedimentation figures used in the study.','Kami tidak anti-bendungan. Kami mempersoalkan angka sedimentasi yang dipakai di studinya.'),
      net:B('Converts residents’ refusal into technical argument that must be answered technically.','Mengubah penolakan warga menjadi argumen teknis yang harus dijawab secara teknis.')},
     {n:'Bambang Setyo', h:'@kadeskepakisan', age:49, trust:66, infl:72, econ:50,
+     src:['OCM 650','OCM 620','SATU PETA'],
      role:B('Village head','Kepala desa'), place:B('Kepakisan Village','Ds. Kepakisan'),
      tags:B(['Local official','Absorbs complaints','Actively neutral'],['Aparat','Menampung keluhan','Netral aktif']),
      bio:B('Leads a village partly inside the inundation zone. Works to ensure residents have equal information before taking a position.',
@@ -1948,6 +2123,7 @@ var SCENARIOS = [
      quote:B('Do not ask residents to take a position when they have not even seen the map.','Jangan minta warga bersikap kalau petanya saja belum pernah mereka lihat.'),
      net:B('Decides whether the process runs through deliberation or through confrontation.','Penentu apakah proses berjalan lewat musyawarah atau lewat konfrontasi.')},
     {n:'Rian Nugroho', h:'@rian.borongan', age:27, trust:44, infl:40, econ:84,
+     src:['BPS','OCM 460','OCM 330'],
      role:B('Local construction worker','Pekerja konstruksi lokal'), place:B('Garung Village','Ds. Garung'),
      tags:B(['Needs work','Pragmatic','Conditional support'],['Butuh pekerjaan','Pragmatis','Mendukung bersyarat']),
      bio:B('Works on contract and goes unemployed between projects. Sees construction as an opportunity but fears the labour will be brought in from outside.',
@@ -2031,6 +2207,14 @@ var SCENARIOS = [
     {d:72, t:B('An independent review is agreed — sentiment among the critical group improves 16 points within two simulated weeks.','Kajian ulang independen disepakati — sentimen kelompok kritis membaik 16 poin dalam dua minggu simulasi.')},
     {d:90, t:B('Schedule uncertainty becomes the dominant complaint, overtaking the compensation figure.','Ketidakpastian jadwal menjadi keluhan dominan, melampaui isu besaran ganti rugi.')}
   ],
+  ocm:{passages:2731, cats:42, review:63, top:[[420,544],[240,469],[360,392],[480,301],[310,247]]},
+  decision:{q:B('How do you respond to the land acquisition offer?','Bagaimana Anda menyikapi tawaran pembebasan lahan?'),
+            y:B(['Accept the offer','Hold out for better terms','Formal objection / review','Collective resistance'],['Terima tawaran','Bertahan menunggu tawaran lebih baik','Keberatan resmi / kajian ulang','Perlawanan kolektif'])},
+  arms:[
+    {k:B('As drafted: compensation at land price','Sesuai draf: ganti rugi berbasis harga tanah'), v:[[24,17,31],[33,25,41],[22,16,29],[21,14,28]]},
+    {k:B('Compensation on income stream','Ganti rugi berbasis arus penghasilan'), v:[[41,33,49],[27,20,34],[19,13,26],[13,8,19]]},
+    {k:B('Income-based + whole-settlement relocation','Berbasis penghasilan + relokasi satu kampung utuh'), v:[[49,41,57],[24,17,31],[17,11,23],[10,6,15]]}
+  ],
   report:{
     stats:[{k:B('Opposed','Menolak'), v:'52%', c:'red'}, {k:B('Neutral','Netral'), v:'23%', c:'yellow'},
            {k:B('Supportive','Mendukung'), v:'25%', c:'green'}, {k:B('Project Delay Risk','Risiko Tertundanya Proyek'), v:'58%', c:'red'}],
@@ -2069,13 +2253,13 @@ var SCENARIOS = [
     ],
     recs:[
       {i:'HIGH', e:'MED', h:B('Value productive land on income stream, not land price','Hitung ganti rugi lahan produktif berbasis arus penghasilan, bukan harga tanah'),
-       p:B('A method based on annual production value and remaining productive life cuts farmer refusal from 81% to 44% in the counterfactual run.','Metode berbasis nilai produksi tahunan dan umur produktif menurunkan penolakan petani dari 81% menjadi 44% pada simulasi tandingan.')},
+       p:B('A method based on annual production value and remaining productive life cuts farmer refusal from around 80% to roughly 40–50% in the counterfactual run.','Metode berbasis nilai produksi tahunan dan umur produktif menurunkan penolakan petani dari sekitar 80% menjadi kira-kira 40–50% pada simulasi tandingan.')},
       {i:'HIGH', e:'HARD', h:B('Relocate the settlement whole, not scattered','Relokasi satu kampung utuh, bukan terpencar'),
        p:B('The objection of inundation zone residents is social. Moving the neighbourhood network intact answers what money cannot.','Keberatan warga zona genangan bersifat sosial. Memindahkan jejaring tetangga secara utuh menjawab keberatan yang tidak bisa dijawab uang.')},
       {i:'HIGH', e:'MED', h:B('Open an independent review early, not under pressure','Buka kajian ulang independen sejak awal, bukan setelah ditekan'),
        p:B('Accepting a review on day 72 recovers 16 points of sentiment. Doing it at the outset prevents the issue from moving to feasibility at all.','Menerima kajian ulang pada hari ke-72 memulihkan 16 poin sentimen. Melakukannya di awal mencegah pergeseran isu ke ranah kelayakan sepenuhnya.')},
       {i:'MED', e:'EASY', h:B('Publish a firm schedule and a single official map','Terbitkan jadwal pasti dan satu versi peta resmi'),
-       p:B('Three briefings with three map versions cut trust by 19%. One map and one consistent timeline is a zero-cost fix.','Tiga sosialisasi dengan tiga versi peta menurunkan kepercayaan 19%. Satu peta dan satu linimasa yang konsisten adalah perbaikan tanpa biaya.')}
+       p:B('Three briefings with three map versions visibly erode trust. One map and one consistent timeline is a zero-cost fix.','Tiga sosialisasi dengan tiga versi peta jelas menggerus kepercayaan. Satu peta dan satu linimasa yang konsisten adalah perbaikan tanpa biaya.')}
     ]
   }
 }
@@ -2140,6 +2324,29 @@ var RISK_CLASS = {CRITICAL:'badge--red', HIGH:'badge--yellow', MEDIUM:'badge--bl
 var RISK_FILL  = {CRITICAL:'var(--chart-2)', HIGH:'var(--chart-3)', MEDIUM:'var(--chart-1)'};
 var ACCENT_VAR = {red:'var(--chart-2)', yellow:'var(--chart-3)', blue:'var(--chart-1)', green:'var(--chart-4)', violet:'var(--chart-5)'};
 var NODE_FILL  = {gov:'var(--chart-1)', issue:'var(--chart-2)', grp:'var(--chart-3)', obj:'var(--chart-5)'};
+/* Answer space Y is ordered from most compliant (0) to most confrontational (3). */
+var Y_FILL     = ['var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)', 'var(--chart-2)'];
+
+/* Outline of Cultural Materials (Yale HRAF), major-section level. */
+var OCM_NAMES = {
+  200:B('Communication','Komunikasi'), 240:B('Agriculture','Pertanian'), 260:B('Food consumption','Konsumsi pangan'),
+  310:B('Land & forest use','Pemanfaatan lahan & hutan'), 330:B('Building & construction','Bangunan & konstruksi'),
+  360:B('Settlements','Permukiman'), 420:B('Property','Hak milik & properti'), 430:B('Exchange','Pertukaran'),
+  440:B('Marketing','Perdagangan'), 450:B('Finance','Keuangan'), 460:B('Labour','Tenaga kerja'),
+  480:B('Travel & transportation','Perjalanan & transportasi'), 570:B('Interpersonal relations','Relasi antarpribadi'),
+  600:B('Kinship','Kekerabatan'), 610:B('Kin groups','Kelompok kerabat'), 620:B('Intra-community relations','Relasi dalam komunitas'),
+  640:B('State','Negara'), 650:B('Government activities','Kegiatan pemerintahan'), 660:B('Political behaviour','Perilaku politik'),
+  670:B('Law','Hukum'), 780:B('Religious practices','Praktik keagamaan'), 870:B('Education','Pendidikan')
+};
+var SRC_NAMES = {
+  BPS:B('BPS statistics','Statistik BPS'), 'SATU PETA':B('Satu Peta spatial data','Data spasial Satu Peta'),
+  ETNO:B('Ethnographic fieldwork','Data etnografi'), NEWS:B('News & public discourse','Berita & percakapan publik')
+};
+
+/* Illustrative effect of the content (h) and situation (z) choices: points moved
+   from the most compliant response to the most confrontational one. */
+var H_SHIFT = [0, -4, -8];
+var Z_SHIFT = [0, 5, 8];
 
 /* ========================================================================= */
 /* State                                                                      */
@@ -2153,6 +2360,7 @@ var state = {
   sources: {etno:true, satudata:true, satupeta:true, sekunder:true},
   params: {agents:1200, days:30, intensity:1, media:65, weight:60},
   platforms: {w:true, b:true},
+  h: 0, z: 0, arms: [true, true, true],
   sim: {queue:[], i:0, day:0, inter:0, agents:0, sent:62, sentEnd:32, running:false, paused:false, speed:1, done:false, evIdx:0},
   timers: [],
   built: false
@@ -2366,9 +2574,27 @@ function renderTerm(){
   clear(term);
   term.appendChild(el('div', 'ln dim', '$ simulacra load --scenario ' + state.scn.code.toLowerCase()));
   term.appendChild(el('div', 'ln ok', (LANG === 'en' ? 'Scenario loaded: ' : 'Skenario dimuat: ') + L(state.scn.title)));
-  if(state.built) state.scn.log.forEach(function(l){ term.appendChild(el('div', 'ln ' + l[1], L(l[0]))); });
+  if(state.built) buildLog(state.scn).forEach(function(l){ term.appendChild(el('div', 'ln ' + l[1], l[0])); });
   else term.appendChild(el('div', 'ln dim', t('term.idle')));
   term.scrollTop = term.scrollHeight;
+}
+
+/* The scenario's own log, with the OCM coding step inserted before the final line. */
+function buildLog(s){
+  var base = s.log.map(function(l){ return [L(l[0]), l[1]]; });
+  var top = s.ocm.top.map(function(c){ return c[0] + ' ' + L(OCM_NAMES[c[0]]) + ' (' + num(c[1]) + ')'; }).join(' · ');
+  var ocm = [
+    [t('ocm.log', {p: num(s.ocm.passages), c: s.ocm.cats}), 'ok'],
+    ['  → ' + top, 'dim'],
+    [t('ocm.review', {n: num(s.ocm.review)}), 'wr']
+  ];
+  return base.slice(0, -1).concat(ocm, base.slice(-1));
+}
+
+function srcLabel(code){
+  var m = /^OCM (\d+)$/.exec(code);
+  if(m) return code + ' · ' + L(OCM_NAMES[m[1]]);
+  return SRC_NAMES[code] ? L(SRC_NAMES[code]) : code;
 }
 
 function termLine(text, cls){
@@ -2385,9 +2611,9 @@ function buildGraph(){
   btn.disabled = true;
   btn.textContent = t('btn.building');
 
-  var lines = state.scn.log, step = REDUCED ? 0 : 340;
+  var lines = buildLog(state.scn), step = REDUCED ? 0 : 340;
   lines.forEach(function(l, i){
-    addTimer(setTimeout(function(){ termLine(L(l[0]), l[1]); }, step * (i + 1)));
+    addTimer(setTimeout(function(){ termLine(l[0], l[1]); }, step * (i + 1)));
   });
   addTimer(setTimeout(function(){
     btn.disabled = false;
@@ -2476,6 +2702,13 @@ function openPersona(i){
   c.appendChild(el('div', 'label', t('modal.net')));
   c.appendChild(el('p', null, L(p.net)));
 
+  if(p.src){
+    c.appendChild(el('div', 'label', t('modal.src')));
+    var st = el('div', 'tags');
+    p.src.forEach(function(x){ st.appendChild(el('span', 'tag', srcLabel(x))); });
+    c.appendChild(st);
+  }
+
   var g = el('div', 'grid g3');
   g.style.marginTop = '4px';
   [[t('meter.trust.s'), p.trust, 'var(--chart-1)'], [t('meter.infl.s'), p.infl, 'var(--chart-5)'], [t('meter.econ.s'), p.econ, 'var(--chart-2)']]
@@ -2486,6 +2719,10 @@ function openPersona(i){
       g.appendChild(box);
     });
   c.appendChild(g);
+  var mh = el('p', 'muted', t('modal.meters'));
+  mh.style.fontSize = '11.5px';
+  mh.style.margin = '10px 0 0';
+  c.appendChild(mh);
 
   $('modal').classList.add('is-open');
   $('modal-close').focus();
@@ -2612,18 +2849,61 @@ function syncParamUI(){
   $('p-agents').value = state.params.agents;
   $('p-days').value = state.params.days;
   $('p-media').value = state.params.media;
-  $('p-weight').value = state.params.weight;
   $('v-agents').textContent = num(state.params.agents);
   $('v-days').textContent = state.params.days + ' ' + t('unit.days');
   $('v-media').textContent = state.params.media + '%';
-  $('v-weight').textContent = (LANG === 'en' ? 'Economic ' : 'Ekonomi ') + state.params.weight + '%';
   Array.prototype.forEach.call($('p-intensity').children, function(b, i){
     b.textContent = tl('intensity')[i];
     b.setAttribute('aria-pressed', i === state.params.intensity ? 'true' : 'false');
   });
   $('plat-warganet').setAttribute('aria-pressed', state.platforms.w ? 'true' : 'false');
   $('plat-balaiwarga').setAttribute('aria-pressed', state.platforms.b ? 'true' : 'false');
+  renderStateCard();
   renderCfgSummary();
+}
+
+function choiceBtn(label, pressed, key, val, locked){
+  var b = el('button', 'choice', label);
+  b.type = 'button';
+  b.dataset[key] = val;
+  b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+  if(locked) b.disabled = true;
+  return b;
+}
+
+/* Decision state s = (d, h, z, a): the parts of the state the user can vary. */
+function renderStateCard(){
+  var a = $('st-arms');
+  clear(a);
+  if(state.scn){
+    state.scn.arms.forEach(function(arm, i){
+      a.appendChild(choiceBtn(String.fromCharCode(65 + i) + ' · ' + L(arm.k), state.arms[i], 'starm', i, i === 0));
+    });
+  } else {
+    a.appendChild(el('span', 'muted', '—'));
+  }
+  [['st-h', 'chan', 'h', 'sth'], ['st-z', 'situ', 'z', 'stz']].forEach(function(g){
+    var w = $(g[0]);
+    clear(w);
+    tl(g[1]).forEach(function(lbl, i){ w.appendChild(choiceBtn(lbl, state[g[2]] === i, g[3], i, false)); });
+  });
+  $('st-d').textContent = state.scn
+    ? t('st.d.v', {n: state.scn.personas.length, p: num(state.scn.ocm.passages)})
+    : t('st.d.none');
+}
+
+function armLetter(i){ return String.fromCharCode(65 + i); }
+
+/* Selected policy options with the illustrative h/z adjustment applied. */
+function armRows(){
+  var shift = H_SHIFT[state.h] + Z_SHIFT[state.z];
+  return state.scn.arms.map(function(arm, i){
+    var v = arm.v.map(function(c){ return c.slice(); });
+    var d = Math.max(-(v[3][0] - 2), Math.min(shift, v[0][0] - 2));
+    v[0] = v[0].map(function(x){ return Math.max(1, x - d); });
+    v[3] = v[3].map(function(x){ return Math.max(1, x + d); });
+    return {i:i, k:arm.k, v:v};
+  }).filter(function(r){ return state.arms[r.i]; });
 }
 
 function renderCfgSummary(){
@@ -2642,7 +2922,9 @@ function renderCfgSummary(){
     state.params.days + ' ' + t('unit.days'),
     tl('intensity')[state.params.intensity],
     state.params.media + '%',
-    t('cfg.weight', {a: state.params.weight, b: 100 - state.params.weight}),
+    tl('chan')[state.h],
+    tl('situ')[state.z],
+    t('cfg.arms', {n: state.arms.filter(Boolean).length}),
     plats.length ? plats.join(' + ') : t('cfg.none'),
     nSrc ? t('cfg.srcActive', {n: nSrc}) : t('cfg.none')
   ];
@@ -2927,9 +3209,16 @@ function renderReport(){
     c.style.background = ACCENT_VAR[st.c] || 'var(--main)';
     c.appendChild(el('div', 'v', L(st.v)));
     c.appendChild(el('div', 'k', L(st.k)));
+    var pm = /^(\d+)%$/.exec(L(st.v));
+    if(pm){
+      var x = +pm[1], w = Math.max(4, Math.round(x * 0.1));
+      c.appendChild(el('div', 's', t('rep.range', {a: Math.max(0, x - w), b: Math.min(100, x + w)})));
+    }
     stats.appendChild(c);
   });
   wrap.appendChild(stats);
+
+  wrap.appendChild(renderArms());
 
   var sum = el('section', 'card pad mt');
   var sh = el('div', 'block-head'); sh.appendChild(el('h3', null, t('rep.summary'))); sum.appendChild(sh);
@@ -3006,6 +3295,8 @@ function renderReport(){
   csec.appendChild(cg);
   wrap.appendChild(csec);
 
+  wrap.appendChild(renderEvidence());
+
   var note = el('div', 'note mt');
   note.appendChild(el('b', null, t('rep.noteLead')));
   note.appendChild(document.createTextNode(t('rep.note')));
@@ -3021,6 +3312,108 @@ function renderReport(){
   wrap.appendChild(act);
 }
 
+/* p_K(y | d, h, z, a) made visible: the share of agents choosing each response y,
+   for every selected policy option a. */
+function renderArms(){
+  var s = state.scn, ys = L(s.decision.y);
+  var sec = el('section', 'card pad mt');
+  var hd = el('div', 'block-head');
+  hd.appendChild(el('h3', null, t('rep.arms')));
+  sec.appendChild(hd);
+
+  var f = el('div', 'formula');
+  f.appendChild(document.createTextNode('p'));
+  f.appendChild(el('sub', null, 'K'));
+  f.appendChild(document.createTextNode('(y | d, h, z, a)'));
+  f.setAttribute('aria-hidden', 'true');
+  sec.appendChild(f);
+  var lede = el('p', 'muted', t('rep.arms.lede', {q: L(s.decision.q)}));
+  lede.style.fontSize = '12.5px';
+  sec.appendChild(lede);
+
+  var scroll = el('div', 'arms-wrap');
+  var tb = el('table', 'arms');
+  var thead = el('thead'), hr = el('tr');
+  hr.appendChild(el('th', null, t('rep.arms.opt')));
+  ys.forEach(function(y, j){
+    var th = el('th');
+    var sw = el('span', 'sw');
+    sw.style.background = Y_FILL[j];
+    th.appendChild(sw);
+    th.appendChild(document.createTextNode(y));
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+  tb.appendChild(thead);
+
+  var tbody = el('tbody');
+  armRows().forEach(function(row){
+    var tr = el('tr');
+    var td0 = el('td');
+    var nm = el('b', null, armLetter(row.i) + ' · ' + L(row.k));
+    td0.appendChild(nm);
+    if(row.i === 0){
+      td0.appendChild(document.createTextNode(' '));
+      td0.appendChild(el('span', 'badge badge--neutral', t('rep.arms.base')));
+    }
+    var bar = el('div', 'stackbar');
+    bar.setAttribute('aria-hidden', 'true');
+    row.v.forEach(function(c, j){
+      var seg = el('i');
+      seg.style.width = c[0] + '%';
+      seg.style.background = Y_FILL[j];
+      bar.appendChild(seg);
+    });
+    td0.appendChild(bar);
+    tr.appendChild(td0);
+    row.v.forEach(function(c){
+      var td = el('td');
+      td.appendChild(el('div', 'pc', c[0] + '%'));
+      td.appendChild(el('div', 'rg muted', c[1] + '–' + c[2] + '%'));
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tb.appendChild(tbody);
+  scroll.appendChild(tb);
+  sec.appendChild(scroll);
+
+  var foot = t('rep.arms.note');
+  if(state.h || state.z) foot = t('rep.arms.adj', {h: tl('chan')[state.h], z: tl('situ')[state.z]}) + ' ' + foot;
+  var fp = el('p', 'muted', foot);
+  fp.style.fontSize = '11.5px';
+  fp.style.margin = '10px 0 0';
+  sec.appendChild(fp);
+  return sec;
+}
+
+/* What was and was not validated, in the shape of the decision state. */
+function renderEvidence(){
+  var s = state.scn;
+  var nSrc = SRC_KEYS.filter(function(k){ return state.sources[k]; }).length;
+  var sec = el('section', 'card pad mt card--cream');
+  var hd = el('div', 'block-head');
+  hd.appendChild(el('h3', null, t('rep.evidence')));
+  sec.appendChild(hd);
+  [
+    [t('evd.valid'), t('evd.valid.v')],
+    [t('evd.d'), t('evd.d.v', {n: s.personas.length, p: num(s.ocm.passages), c: s.ocm.cats, k: nSrc})],
+    [t('evd.h'), tl('chan')[state.h]],
+    [t('evd.z'), tl('situ')[state.z]],
+    [t('evd.a'), armRows().map(function(r){ return armLetter(r.i); }).join(', ')],
+    [t('evd.y'), L(s.decision.y).join(' · ')],
+    [t('evd.model'), t('evd.model.v')],
+    [t('evd.unc'), t('evd.unc.v')],
+    [t('evd.gap'), t('evd.gap.v')]
+  ].forEach(function(r){
+    var line = el('div', 'summary-line');
+    line.appendChild(el('span', 'muted', r[0]));
+    line.appendChild(el('b', null, r[1]));
+    sec.appendChild(line);
+  });
+  return sec;
+}
+
 /* ========================================================================= */
 /* Scenario loading                                                           */
 /* ========================================================================= */
@@ -3033,6 +3426,7 @@ function loadScenario(id){
   state.built = false;
   state.params = {agents:s.params.agents, days:s.params.days, intensity:s.params.intensity, media:s.params.media, weight:s.params.weight};
   state.platforms = {w:true, b:true};
+  state.h = 0; state.z = 0; state.arms = [true, true, true];
   state.sources = {etno:true, satudata:true, satupeta:true, sekunder:true};
   state.unlocked = {dashboard:true, input:true};
   state.sim.speed = 1;
@@ -3091,6 +3485,18 @@ document.addEventListener('click', function(ev){
   var per = target.closest('[data-persona]');
   if(per){ openPersona(+per.dataset.persona); return; }
 
+  var arm = target.closest('[data-starm]');
+  if(arm){
+    var ai = +arm.dataset.starm;
+    if(ai > 0) state.arms[ai] = !state.arms[ai];
+    syncParamUI();
+    return;
+  }
+  var sh = target.closest('[data-sth]');
+  if(sh){ state.h = +sh.dataset.sth; syncParamUI(); return; }
+  var sz = target.closest('[data-stz]');
+  if(sz){ state.z = +sz.dataset.stz; syncParamUI(); return; }
+
   var chip = target.closest('[data-q]');
   if(chip){ $('question').value = chip.dataset.q; toast(t('t.question')); return; }
 
@@ -3125,7 +3531,6 @@ $('btn-rerun').addEventListener('click', startSim);
 $('p-agents').addEventListener('input', function(){ state.params.agents = +this.value; syncParamUI(); });
 $('p-days').addEventListener('input', function(){ state.params.days = +this.value; syncParamUI(); });
 $('p-media').addEventListener('input', function(){ state.params.media = +this.value; syncParamUI(); });
-$('p-weight').addEventListener('input', function(){ state.params.weight = +this.value; syncParamUI(); });
 
 $('p-intensity').addEventListener('click', function(e){
   var b = e.target.closest('button');
